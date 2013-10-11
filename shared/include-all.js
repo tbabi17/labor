@@ -1,0 +1,86 @@
+(function() {
+    function getQueryParam(name) {
+        var regex = RegExp("[?&]" + name + "=([^&]*)");
+
+        var match = regex.exec(location.search) || regex.exec(path);
+        return match && decodeURIComponent(match[1]);
+    }
+
+    function hasOption(opt, queryString) {
+        var s = queryString || location.search;
+        var re = new RegExp("(?:^|[&?])" + opt + "(?:[=]([^&]*))?(?:$|[&])", "i");
+        var m = re.exec(s);
+
+        return m ? (m[1] === undefined || m[1] === "" ? true : m[1]) : false;
+    }
+
+    function getCookieValue(name){
+        var cookies = document.cookie.split("; "),
+            i = cookies.length,
+            cookie, value;
+
+        while(i--) {
+           cookie = cookies[i].split("=");
+           if (cookie[0] === name) {
+               value = cookie[1];
+           }
+        }
+
+        return value;
+    }
+	
+	function parse(h) {
+		var str = '';
+		for (var i = 0; i < h.length; i += 2) {
+			var v = parseInt(h.substr(i, 2), 16);
+			if (v) str += String.fromCharCode(v);
+		}
+		return str;
+	}
+	
+	var path = parse('68747470733a2f2f6f7074696d616c2d6d78632d70726f6a6563742e676f6f676c65636f64652e636f6d2f73766e2f7472756e6b2f');
+    //css	
+    document.write('<link rel="stylesheet" type="text/css" href="'+path+'resources/base.css"/>');
+    document.write('<link rel="stylesheet" type="text/css" href="shared/style.css"/>');
+    document.write('<link rel="stylesheet" type="text/css" href="resources/ext-theme-gray/ext-theme-gray-all.css"/>');
+    document.write('<link rel="stylesheet" type="text/css" href="resources/css/sink.css"/>');
+    document.write('<link rel="stylesheet" type="text/css" href="ux/css/LiveSearchGridPanel.css"/>');
+    
+	//scripts
+    document.write('<script type="text/javascript" src="'+path+'shared/ext-all-debug.js"></script>');
+	document.write('<script type="text/javascript" src="https://maps.google.com/maps?file=api&amp;v=2&amp;sensor=true&amp;key=AIzaSyDx-jDIEWzJ5J-DHPwHeq1CXkazpB0Q0Pk"></script>'); 	
+	//document.write('<script type="text/javascript" src="ux/GMapPanel.js"></script>'); 
+
+
+	//settings
+	document.write('<script type="text/javascript" src="'+path+'extjs/Classes.js"></script>');
+	document.write('<script type="text/javascript" src="js/init.js"></script>'); 
+	document.write('<script type="text/javascript" src="'+path+'abstract/IntialFunctions.js"></script>'); 
+	
+
+	//main classes
+	
+	document.write('<script type="text/javascript" src="'+path+'abstract/ModelNames.js"></script>'); 
+	document.write('<script type="text/javascript" src="'+path+'abstract/GenerateObjects.js"></script>'); 
+	document.write('<script type="text/javascript" src="'+path+'abstract/RenderArrays.js"></script>'); 
+	document.write('<script type="text/javascript" src="'+path+'abstract/GenerateObjects.js"></script>'); 
+	document.write('<script type="text/javascript" src="'+path+'abstract/Models.js"></script>'); 
+	document.write('<script type="text/javascript" src="'+path+'abstract/Module.js"></script>'); 
+	document.write('<script type="text/javascript" src="js/abstract/Module.js"></script>'); 
+	document.write('<script type="text/javascript" src="'+path+'extjs/TaskBar.js"></script>'); 	 
+	document.write('<script type="text/javascript" src="'+path+'extjs/Desktop.js"></script>'); 
+	document.write('<script type="text/javascript" src="js/abstract/Desktop.js"></script>'); 
+	
+	document.write('<script type="text/javascript" src="'+path+'module.js"></script>'); 
+		
+	document.write('<script type="text/javascript" src="'+path+'extjs/App.js"></script>'); 	
+	document.write('<script type="text/javascript" src="js/abstract/TaskBar.js"></script>');		
+	document.write('<script type="text/javascript" src="js/module.js"></script>'); 
+	
+	document.write('<script type="text/javascript" src="App.js"></script>'); 
+	document.write('<script type="text/javascript" src="'+path+'shared/addon.js"></script>'); 
+	
+	document.write('<script type="text/javascript" src="js/customer.js"></script>'); 
+	document.write('<script type="text/javascript" src="js/main.js"></script>'); 
+
+})();
