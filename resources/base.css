@@ -131,3 +131,7 @@ pre.code{
     height: 32px;
     font-size: 11px;
 }
+
+.x-combo-list-item {
+    font-size:10px; 
+}

@@ -74442,7 +74442,6 @@ Ext.define('Ext.data.proxy.JsonP', {
         }
 
         request.jsonp = Ext.data.JsonP.request(request);
-        
         request.params = params;
         operation.setStarted();
         me.lastRequest = request;

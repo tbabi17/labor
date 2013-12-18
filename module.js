@@ -34,7 +34,8 @@ Ext.define('OSS.BogusModule', {
 Ext.define('OSS.MapModulePanel', {
     extend: 'OSS.BogusModule',
     id: 'google-map-win',
-    
+    ext: '.jpg',
+
     init : function(){
     	this.title = Ext.sfa.translate_arrays[langid][514];        
     },
@@ -65,7 +66,6 @@ Ext.define('OSS.MapModulePanel', {
             });
         }
         win.show(); 
-		win.toggleMaximize();
         me.win = win;
         
         return win;
@@ -91,15 +91,11 @@ Ext.define('OSS.MapModulePanel', {
     	    proxy: {
     			type: 'ajax',
     			url: 'httpGW',
-    			method: 'POST',
     	        reader: {
     				type: 'json',
     	            root:'items',
     	            totalProperty: 'results'
-    	        },
-    	        actionMethods: {                    
-                    read: 'POST'                   
-                } 
+    	        }
     		}
     	});
     	
@@ -132,23 +128,24 @@ Ext.define('OSS.MapModulePanel', {
     	var me = this;
 		me.createStore();
     	me.currentDate = currentDate;  
-    	me.googleMap = Ext.create('Ext.ux.GMapPanel', {	
+
+		me.googleMap = Ext.create('Ext.ux.GMapPanel', {
+			xtype: 'gmappanel',
 			flex: 0.65,
-			region: 'center',
-			gmapType: 'map',                        
-            setCenter: {
-                geoCodeAddr: '15171, Ulaanbaatar, Mongolia',
-                marker: {title:''}
-            },            
-            mapConfOpts: ['enableScrollWheelZoom','enableDoubleClickZoom','enableDragging'],
-            mapControls: ['GSmallMapControl','GMapTypeControl','NonExistantControl'],            
-            
+			border: false,
+			region:'center',
+			center: {
+				 geoCodeAddr: '15171, Ulaanbaatar, Mongolia',
+				 marker: {title:''}
+			},
 			markers: []
-    	});    	    	
-    	
+		});
+
 		me.markerCurrentUsers();		
     	return me.googleMap;
     },
+
+	toggled : false,
     
 	markerCurrentUsers: function() {
 		var me = this;
@@ -157,31 +154,38 @@ Ext.define('OSS.MapModulePanel', {
 			 callback: function() {
 				me.putMarkers();
 			 }
-		});				
+		});
 	},
 		
 	markerSelectedUser: function(userCode) {
 		var me = this;
-		
-		me.store.load({params:{xml:_donate('_map_selected_user_locations', 'SELECT', ' ', ' ', ' ', userCode+','+userCode+','+userCode+','+me.currentDate)}, 
+				
+		me.store.load({params:{xml:_donate('_map_selected_user_locations', 'SELECT', ' ', ' ', ' ', userCode+','+userCode+','+me.currentDate+','+userCode+','+me.currentDate)}, 
 			 callback: function() {
 				me.putMarkers();
 			 }
-		});				
+		});		
 	},
 	
 	markerSelectedUserStep: function(userCode) {
 		var me = this;
-		me.store.load({params:{xml:_donate('_map_selected_user_locations', 'SELECT', ' ', ' ', ' ', userCode+','+userCode+','+userCode+','+me.currentDate)}, 
+		me.store.load({params:{xml:_donate('_map_selected_user_locations', 'SELECT', ' ', ' ', ' ', userCode+','+userCode+','+me.currentDate+','+userCode+','+me.currentDate)}, 
 			 callback: function() {		
 				me.putMarkersStep();							
 			 }
 		});				
 	},
+	
+	getIcon: function(data, t, i) {	
+		if (i == 0)
+			return 'shared/icons/fam/marker_start.png';
+		if (t-1 == i)
+			return 'shared/icons/fam/marker_end.png';
 
-	getIcon: function(data) {	
+	
+
 		if (data['ico'] == 3)		
-			return 'shared/icons/fam/walk.png';
+			return 'shared/icons/fam/idle.png';
 		if (data['ico'] == 4)
 			return 'shared/icons/fam/home.png';
 		if (data['amount'] == 0 && data['ico'] > 0)
@@ -191,27 +195,33 @@ Ext.define('OSS.MapModulePanel', {
 		if (data['ico'] == 2)
 			return 'shared/icons/fam/marker_g.png';
 
-		return 'shared/img/users/'+data['code']+'.jpg';
+		return 'shared/img/users/'+data['code']+this.ext;
 	},
 
 	getValue: function(data) {
-		if (data['code'].length == 3)
-			return Ext.sfa.renderer_arrays['renderUserCode'](data['code']);
+		if (data['code'].length == 3) {
+			v = Ext.sfa.renderer_arrays['renderUserCode'](data['code']);
+			v = v.substring(11, v.length);
+			return v;
+		}
 		if (data['code'].length > 3)
-			return Ext.sfa.renderer_arrays['renderCustomerCode'](data['code']);
+			return Ext.sfa.renderer_arrays['renderCustomerCode'](data['code'])+' ['+Ext.sfa.renderer_arrays['renderSMoney'](data['amount'])+' ₮]';
 	},
 
 	putMarkers: function() {
 		var me = this;
-		me.googleMap.removeMarkers();
+
+		var t = me.store.getCount();
+		var i = 0;
 		me.store.each(function(rec){
-			me.addMarker(rec.data);
+			me.addMarker(rec.data, t, i);
+			i++;
 		});
 	},
 
 	putMarkersStep: function() {
 		var me = this;
-		me.googleMap.removeMarkers();
+		
 		index = 0;
 		me.store.each(function(rec){
 			setTimeout(function() {
@@ -220,29 +230,78 @@ Ext.define('OSS.MapModulePanel', {
 			index++;
 		});
 	},
+
+	polylines: [],	
+	hash: [],
+	lineCount: 0,
+	overlay: [],
 	
-	addMarker: function(data) {
+	addMarker: function(data, t, i) {
+		if (data['lat'] == 0) return;
 		var me = this;
+		if (me.hash[data['lat']] == 1 && me.hash[data['lng']] == 1)
+			return;		
+
+		me.hash[data['lat']] = 1;
+		me.hash[data['lng']] = 1;
+
 		var draggable = false;
 		if (data['draggable']) draggable = true;
+		var size = data['ico']==3?16:24;
+		var url = me.getIcon(data, t, i);
+	    var icon = new google.maps.MarkerImage(	    		
+	    		 	url,
+		            new google.maps.Size(size, size), //size
+		            new google.maps.Point(0,0), //origin
+		            new google.maps.Point(size/2, size),
+		            new google.maps.Size(size, size)//scale 
+		);
+			    
 		var marker = {
-				lat: data['lat'],
-				lng: data['lng'],	
-				title: me.getValue(data),
-				time: data['hhmmss'],
-				draggable: draggable,
-				url:  me.getIcon(data),
-				marker: {
-					title: me.getValue(data)
-				},
-				listeners: {
-					click: function(e){				                    
-
-					}
-				}
+			lat: data['lat'],
+			lng: data['lng'],					
+			time: data['hhmmss'],
+			title: data['hhmmss']+' '+me.getValue(data),			
+			icon: icon				
 		};
 		
-		me.googleMap.addMarkerN(marker);
+		me.polylines.push(new google.maps.LatLng(data['lat'], data['lng']));
+		
+		if (me.polylines.length == 2) {		
+			var lineSymbol = {
+			   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+		    };
+
+			me.flightPath = new google.maps.Polyline({
+				path: me.polylines,
+				geodesic: true,
+				strokeColor: '#ff6633',
+				strokeOpacity: 1.0,
+				icons: [{
+				  icon: lineSymbol,
+				  offset: '50%'
+				}],
+				strokeWeight: 2
+			});
+
+			me.overlay.push(me.flightPath);
+			me.flightPath.setMap(me.googleMap.gmap);
+			me.polylines.splice(0, 1);
+			me.lineCount++;
+		}
+
+		var marker = me.googleMap.addMarker(marker);
+		me.overlay.push(marker);
+	},
+	
+	removeMarkers: function() {
+		var me = this;
+		if (me.overlay)
+		{		
+			for (i = 0; i < me.overlay.length; i++) {
+				me.overlay.setMap(null);
+			}
+		}
 	},
 
     createToolbar: function() {
@@ -281,7 +340,7 @@ Ext.define('OSS.MapModulePanel', {
 							handler: function() {
 								if (!me.users.getValue())
 									Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
-								else
+								else 
 									me.markerSelectedUser(me.users.getValue());
 							}
 						},						
@@ -305,8 +364,7 @@ Ext.define('OSS.MapModulePanel', {
 									return false;
 								}
 								else {
-									me.grid.setVisible(pressed);
-									me.googleMap.removeMarkers();
+									me.grid.setVisible(pressed);									
 									me.store1.load({params:{xml:_donate('_map_selected_user_customer_locations', 'SELECT', ' ', ' ', ' ',  me.users.getValue())}});
 								}
 							}
@@ -326,7 +384,6 @@ Ext.define('OSS.MapModulePanel', {
 		var me = this;
 
 		me.grid = Ext.create('Ext.ux.LiveSearchGridPanel', {	               
-			store: me.store,	    
 			flex: 0.35,
 			region: 'west',				
 			split: true,
@@ -489,8 +546,8 @@ Ext.define('OSS.SaleGridWindow', {
     	if (mode == 0) {
 	    	me.mainFields[viewType] = [];
 	    	me.mainFields[viewType][0] = {name: 'level', type: 'int', title: '!', width: 28, renderer: renderLevel, summaryType: 'count', summaryRenderer: Ext.sfa.renderer_arrays['renderTNumber']};
-	    	me.mainFields[viewType][1] = {name: 'name', type: 'string', title: Ext.sfa.translate_arrays[langid][310], summaryType: 'count', width: 90, renderer: Ext.sfa.renderer_arrays['renderAllUserCode'], locked:false, filterable: true, summaryRenderer: function(value){
-	    		return 0;//return '<span style="font-size:11px">'+value+' ['+Ext.sfa.translate_arrays[langid][321]+']</span>';
+	    	me.mainFields[viewType][1] = {name: 'name', type: 'string', title: Ext.sfa.translate_arrays[langid][310], summaryType: 'count', width: 90, renderer: Ext.sfa.renderer_arrays['renderUserCode'], locked:false, filterable: true, summaryRenderer: function(value){
+	    		return 0;// '<span style="font-size:11px">'+value+' ['+Ext.sfa.translate_arrays[langid][321]+']</span>';
 	    	}};	
 	    	var count = 2;	
 			if (me.columned)
@@ -2303,12 +2360,12 @@ Ext.define('OSS.LeaseGridWindow', {
     	var me = this;
     	
     	me.columns = [
-           {name: 'discount', type: 'int', width: 0, hidden: true, title: ''},
+           {name: 'discount', type: 'int', width: 80, hidden: true, title: ''},
            {name: 'customerCode', type: 'string', width: 100, flex: 1, title: 'Харилцагч', renderer: Ext.sfa.renderer_arrays['renderCustomerCode']},
            {name: 'lease', type: 'int', title: 'Зээлийн хэмжээ', align: 'right', width: 120, renderer: Ext.sfa.renderer_arrays['renderMoney'], summaryType:'sum', summaryRenderer: Ext.sfa.renderer_arrays['renderTMoney']},            
            {name: 'payed', type: 'int', title: 'Төлсөн', align: 'right', width: 120, summaryType:'sum', summaryRenderer: Ext.sfa.renderer_arrays['renderTMoney'], renderer: Ext.sfa.renderer_arrays['renderMoney']},
            {name: 'flag', type: 'int', title: 'Үлдэгдэл', align: 'right', width: 120, summaryType:'sum', summaryRenderer: Ext.sfa.renderer_arrays['renderTMoney'], renderer: Ext.sfa.renderer_arrays['renderMoney']},
-           {name: 'payin', type: 'int', title: 'Төлж байгаа дүн', align: 'right', width: 120, renderer: Ext.sfa.renderer_arrays['renderMoney'],  field: {xtype: 'currencyfield', decimalPrecision:2}},
+           {name: 'payin', type: 'int', title: 'Төлж байгаа дүн', align: 'right', width: 120, renderer: Ext.sfa.renderer_arrays['renderMoney'],  field: {xtype: 'field-money', decimalPrecision:2}},
            {name: '_date', type: 'date', title: 'Огноо', align: 'center', width: 80, renderer: Ext.sfa.renderer_arrays['renderDate'],  field: {xtype: 'datefield'}}
         ];
     	
@@ -2360,17 +2417,12 @@ Ext.define('OSS.LeaseGridWindow', {
     		store: me.store,
     		features: [me.summary],
     		plugins: [new Ext.grid.plugin.CellEditing({
+				id: 'lease_grid_win_celledit',
     	        clicksToEdit: 1,
 				pluginId: 'cellplugin',
 				listeners: {
-					'afteredit': function(e) {
-						for (i = 0; i < me.store.getCount(); i++) {
-							var rec = me.store.getAt(i);
-							if (rec.get('flag') < rec.get("payin"))
-								me.store.getAt(i).set('payin', 0);
-							else
-								Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Буруу дүн !', null);
-						}
+					'afteredit': function(editor, e) {
+						
 					}
 				}
     	    })],
@@ -2397,26 +2449,24 @@ Ext.define('OSS.LeaseGridWindow', {
     		me.loadStore();
     	});
     	
-    	return [{
-            xtype: 'toolbar',	          
-            items: [me.users, {
-            	text: 'Харах',
-                iconCls: 'refresh',
-                handler: function() {	
-                	if (me.users.getValue() > '')
-                		me.loadStore();
-                	 else 
-	                	Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][539], null);
-                }
-            },'-',{
-            	text: 'Зээл төлөлтүүдийг оруулах',
-                iconCls: 'icon-apply',
-                handler: function() {	
-                	Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][541], function(btn, text){	                		
-            			if (btn == 'yes'){	
-            				var p = 0;
-    	                	for (i = 0; i < me.store.getCount(); i++) {
-    	                		var rec = me.store.getAt(i);           			
+		me.buttons = [me.users, {
+				text: 'Харах',
+				iconCls: 'refresh',
+				handler: function() {	
+					if (me.users.getValue() > '')
+						me.loadStore();
+					 else 
+						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][539], null);
+				}
+			},'-',{
+				text: 'Зээл төлөлтүүдийг оруулах',
+				iconCls: 'icon-apply',
+				handler: function() {	
+					Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][541], function(btn, text){	                		
+						if (btn == 'yes'){	
+							var p = 0;
+							for (i = 0; i < me.store.getCount(); i++) {
+								var rec = me.store.getAt(i);           			
 								var ticketID = getTicketId();
 								if (rec.get('payin') > 0) {
 									var date = Ext.Date.format(rec.get('_date'), 'Y-m-d');
@@ -2426,29 +2476,29 @@ Ext.define('OSS.LeaseGridWindow', {
 										'_dateStamp,customerCode,userCode,productCode,posX,posY,type,quantity,price,amount,discount,flag,ticketID', v, ' ')}});
 									p = 1;
 								}	                	
-    	                	}
+							}
 
-    	                	if (p == 1) {
-    	                		Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][557], function() {	                				                				                			
-    	                			me.loadStore();	    	                	
-    	                		});
-    	                	}
-    	                	else
-    	                		Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
-            			} else {
-            	
-            			}
-            		});	                		                
-                }
-            },'-',	                        	
-            {
-            	text: Ext.sfa.translate_arrays[langid][305],
-                iconCls: 'help',
-                handler: function() {
-                	showHelpWindow('order_incomplete');
-                }	                
-            }]
-        }];
+							if (p == 1) {
+								Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][557], function() {	                				                				                			
+									me.loadStore();	    	                	
+								});
+							}
+							else
+								Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
+						} else {
+				
+						}
+					});	                		                
+				}
+			}
+        ];
+
+    	me.addStandardButtons();
+		
+		return [{
+			xtype: 'toolbar',
+			items: me.buttons
+		}];
     }
 });
 
@@ -2569,7 +2619,7 @@ Ext.define('OSS.OrderGridWindow', {
     
     loadStore: function() {
     	var me = this;
-    	me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b', 'id,_date,userCode,productCode,storageCount,availCount,requestCount,confirmedCount,price,requestCount*price as amount,wareHouseID', 'i,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount=0 and userCode='"+me.users.getValue()+"' and userCode=customerCode and flag=0 ORDER by _date desc,confirmedCount asc")}, 
+    	me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b', 'id,_date,userCode,productCode,storageCount,availCount,requestCount,confirmedCount,price,requestCount*price as amount,b.wareHouseID', 'i,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount=0 and userCode='"+me.users.getValue()+"' and userCode=customerCode and flag=0 ORDER by _date desc,confirmedCount asc")}, 
     		callback: function(){    			
     			me.store.each(function(rec){ rec.set('agree', true) })    			
     		}});
@@ -2961,8 +3011,8 @@ Ext.define('OSS.ControlPanel', {
             data: [ 
                    ['Users', 'users', Ext.sfa.translate_arrays[langid][264], 'userID', 830, 500, 'user-module'],
                    ['Customer', '_customer_list', Ext.sfa.translate_arrays[langid][265], 'customerID', 980, 580, 'customer-module'],
-                   ['Product', 'product', Ext.sfa.translate_arrays[langid][270], 'productID', 860, 550, 'product-module'],
-                   ['Price', '_price_list', Ext.sfa.translate_arrays[langid][272], 'id', 500, 450, 'price-module'],                   
+                   ['Product', 'product', Ext.sfa.translate_arrays[langid][270], 'productID', 960, 550, 'product-module'],
+                   ['Price', '_price_list', Ext.sfa.translate_arrays[langid][272], 'id', 650, 450, 'price-module'],                   
                    ['ItemsTransaction', 'items_transaction', Ext.sfa.translate_arrays[langid][649], 'itemID', 650, 465, 'item-module'],
                    ['Cars', 'cars', Ext.sfa.translate_arrays[langid][643], 'id', 500, 350, 'cars-module'],
                    ['Route', 'routes', Ext.sfa.translate_arrays[langid][267], 'routeID', 450, 500, 'route-module'],                   
@@ -3223,7 +3273,7 @@ Ext.define('OSS.ManualModulePanel', {
                      {name: 'icon'}
             ],
             data: [
-                   ['Hand_order', 'planexecute', Ext.sfa.translate_arrays[langid][293], 'id', 700, 450, 'hand-order-module'],                   
+                   ['order-import-manual', 'module', Ext.sfa.translate_arrays[langid][293], 'id', 700, 450, 'hand-order-module'],                   
                    ['Hand_sale', 'Product_count', Ext.sfa.translate_arrays[langid][294], 'id', 700, 500, 'hand-sale-module'],
                    ['update-sales-data-win', 'module', Ext.sfa.translate_arrays[langid][295], 'id', 800, 450, 'update-sale-module'],
                    ['update-orders-data-win', 'module', Ext.sfa.translate_arrays[langid][618], 'id', 800, 450, 'update-sale-module']
@@ -3275,9 +3325,8 @@ Ext.define('OSS.StorageModulePanel', {
                    ['User_Products', '_product_user_data_detail', Ext.sfa.translate_arrays[langid][280], 'userCode', 960, 600, 'user-product-module'],                                     
                    ['complete-order-grid-win', 'module', Ext.sfa.translate_arrays[langid][511], '', 0, 0, 'storage-out-module'],                   
                    ['storage-insert-win', 'module', Ext.sfa.translate_arrays[langid][512], 'id', 500, 450, 'storage-in-module'],
-                   ['User_Orders', '_user_orders', Ext.sfa.translate_arrays[langid][639], 'id', 700, 450, 'storage-report-module'],
+                   ['orders-report-win', 'module', Ext.sfa.translate_arrays[langid][639], 'id', 700, 450, 'storage-report-module'],
                    ['Storage_Out_Report', '_storage_out_q', Ext.sfa.translate_arrays[langid][655], 'id', 850, 550, 'storage-out-product']
-                   //['Storage_Report', '_storage_q', Ext.sfa.translate_arrays[langid][513], 'id', 850, 550, 'storage-report-module']                                     
             ]
         });
     }   
@@ -3361,17 +3410,23 @@ Ext.define('OSS.StorageInsert', {
     createWindow : function(){
     	var desktop = this.app.getDesktop();
         var win = desktop.getWindow('storage-insert-win');        
-        if(!win){        	        	
+		var me = this;
+        if(!win){     
+			me.createGrid();
             win = desktop.createWindow({
                 id: 'storage-insert-win',
                 title:this.title,
-                width:560,
-                height:480,
+                width:750,
+                height:600,
                 iconCls: 'icon-grid',
                 animCollapse:false,
                 constrainHeader:true,
-                layout: 'fit',
-                items: [this.createGrid()]
+                layout: {
+					type: 'border',
+					align: 'stretch'
+				},
+				dockedItems: me.createToolbar(),
+                items: [me.grid1, me.grid]
             });
         }
         win.show();
@@ -3381,14 +3436,7 @@ Ext.define('OSS.StorageInsert', {
     clearData : function() {
     	var me = this;
   		var t = 0;
-		for (i = 0; i < Ext.sfa.stores['product_list'].getCount(); i++) {
-    		var record = Ext.sfa.stores['product_list'].getAt(i);
-    		if (me.productAble(record)) {
-    			me.storage_temp_data[t] = {'productCode':record.data['code'], 'requestCount':0, 'from': 0, 'to': 0};
-    			t++;
-    		}
-    	}                	                	
-    	
+		me.storage_temp_data = [];
 		me.storage_row_ds.loadData(me.storage_temp_data);    	    
 	},
 	
@@ -3396,14 +3444,6 @@ Ext.define('OSS.StorageInsert', {
     	var me = this;
     	
     	me.storage_temp_data = [];
-    	var t = 0;
-    	for (i = 0; i < Ext.sfa.stores['product_list'].getCount(); i++) {
-    		var record = Ext.sfa.stores['product_list'].getAt(i);
-    		if (me.productAble(record)) {
-    			me.storage_temp_data[t] = {'productCode':record.data['code'], 'requestCount':0, 'from': 0, 'to': 0};
-    			t++;
-    		}
-    	}
     	
     	me.storage_row_ds = Ext.create('Ext.data.JsonStore', {
             fields: [
@@ -3413,24 +3453,159 @@ Ext.define('OSS.StorageInsert', {
                 {name: 'to',  type: 'int'}
             ]
         });
-    },        
-    
+
+		
+		me.model = me.generateModel('Price', 'Price');
+    	me.store = me.model['readStore'];
+
+		me.xml = _donate('_custom_price_list', 'SELECT', ' ', ' ', ' ', '1,battrade');
+		me.store.getProxy().extraParams = {xml:_donate('_custom_price_list', 'SELECT', ' ', ' ', ' ', '1,battrade')};
+		me.store.loadPage(1);
+    },           
+	_to: 1,
+	_from: 1,
     createGrid : function() {
     	var me = this;
     	me.createStore();
     	me.clearData();
-    	me.grid = Ext.create('Ext.ux.LiveSearchGridPanel', {			
+
+    	me.group1 = 'ts_group1';
+    	me.group2 = 'ts_group2';
+
+		me.grid = Ext.create('Ext.grid.Panel', {
+    		xtype: 'grid',
+    		border: false,
+    		store: me.store,
+			region: 'north',
+    		columnLines: true,
+			flex: 1,
+    		columns: me.createHeadersWithNumbers(me.model['columns']),			
+			viewConfig: {
+                plugins: {
+                    ptype: 'gridviewdragdrop',
+                    dragGroup: me.group1,
+                    dropGroup: me.group2
+                },
+                listeners: {
+                    drop: function(node, data, dropRec, dropPosition) {                    	
+                    	              	
+                    }
+                }
+            },
+			bbar: Ext.create('Ext.PagingToolbar', {
+				store: me.store,
+				displayInfo: true,
+				displayMsg: '{0}-{1} of {2}',
+				emptyMsg: "Empty !",
+				items: [{
+						text: 'Хайлт : '				
+					},{
+						xtype: 'textfield',
+						width: 150,
+						readOnly: false,
+						listeners: {
+							 change: {
+								 fn: me.onTextFieldChange_,
+								 scope: this,
+								 buffer: 200
+							 }
+						}
+					},'->'
+				]
+			})
+    	});
+				
+    	me.grid1 = Ext.create('Ext.grid.Panel', {
     		xtype: 'grid',			    		
     		store: me.storage_row_ds,			
     		columnLines: true,		
 			border: false,
-    		features:[
-    	          {
-    	        	  id: 'summary_storage_temp',
-    	        	  ftype: 'summary'
-    	          }
-    		], 
-    		columns: [ new Ext.grid.RowNumberer({width:30}),
+			split: true,
+			region: 'center',
+			flex: 0.6,
+			viewConfig: {
+                plugins: {
+                    ptype: 'gridviewdragdrop',
+                    dragGroup: me.group2,
+                    dropGroup: me.group1
+                },
+                listeners: {
+                    drop: function(node, data, dropRec, dropPosition) {
+                    	var rec = data.records[0];				   
+						if (1==1) {
+							var productCode = rec.data['productCode'];										
+												
+							var requestCount = Ext.create('Ext.form.NumberField', {
+								xtype: 'numberfield',
+								fieldLabel: 'Шилжүүлэх тоо',
+								name: 'requestCount',
+								minValue: 0,
+								maxValue: 900000,
+								value: rec.data['requestCount'],
+								align: 'right',
+								allowBlank: false,
+								allowDecimals: true,
+								decimalPrecision: 2
+							});																		
+							
+							var wareFrom = me.generateLocalComboWithField('local_ware_house', 'ware_house', 'wareHouseID', 'name', 'Агуулахаас', 100, 'Агуулахаас');
+							var wareTo = me.generateLocalComboWithField('local_ware_house', 'ware_house', 'wareHouseID', 'name', 'Агуулахруу', 100, 'Агуулахруу');
+							wareFrom.width = 300;
+							wareTo.width = 300;
+							wareFrom.setValue(me._from);
+							wareTo.setValue(me._to);
+						
+							var storage_row = Ext.createWidget('form', {			        			        
+								bodyPadding: 5,
+								width: 320,
+								height: 240,
+								border: false,		        
+								fieldDefaults: {
+									labelAlign: 'left',
+									labelWidth: 130,
+									fieldWidth: 80,
+									allowBlank: false    				            
+								},
+								items: [wareFrom, wareTo, requestCount],
+								buttons: [{
+										text: 'OK',
+										handler: function() {			
+											me._to = wareTo.getValue();
+											me._from = wareFrom.getValue();
+											
+											rec.set('requestCount', requestCount.getValue());
+											rec.set('from', wareFrom.getValue());
+											rec.set('to', wareTo.getValue());
+																																						
+											win_row.hide();
+										}
+									},
+									{
+										text: Ext.sfa.translate_arrays[langid][327],
+										handler: function() {
+											win_row.hide();
+										}
+									}
+								]
+							});
+											
+							
+							var win_row = Ext.widget('window', {
+								title: Ext.sfa.renderer_arrays['renderProductCode'](productCode),			
+								bodyPadding: 0,
+								layout: 'fit',
+								width: 320,
+								height: 240,
+								items: [storage_row]
+							});
+							
+							win_row.show();
+						}
+                    }
+                }
+            },
+			columns: [ 
+				new Ext.grid.RowNumberer({width:30}),
     		    {			
     				text: Ext.sfa.translate_arrays[langid][345],			
     	   			dataIndex: 'productCode',
@@ -3458,91 +3633,15 @@ Ext.define('OSS.StorageInsert', {
     	   			renderer: Ext.sfa.renderer_arrays['renderWareHouseID'],
     	   			width: 100 			   	
     			}
-    		],    		
-    		dockedItems: this.createToolbar(),
-    		listeners: {
-    			itemclick: function(grid, record, item, index, e) {        	                     		   
-	            	var rec = record;				   
-    				if (rec) {
-    					var productCode = rec.data['productCode'];										
-    										
-    					var requestCount = Ext.create('Ext.form.NumberField', {
-    		                xtype: 'numberfield',
-    		                fieldLabel: 'Шилжүүлэх тоо ширхэг',
-    		                name: 'requestCount',
-    		                minValue: 0,
-    		                maxValue: 900000,
-    		                value: rec.data['requestCount'],
-    		                align: 'right',
-    		                allowBlank: false,
-    		                allowDecimals: true,
-    		                decimalPrecision: 2
-    		            });																		
-    					
-    					var wareFrom = me.generateLocalComboWithField('local_ware_house', 'ware_house', 'wareHouseID', 'name', 'Агуулахаас', 100, 'Агуулахаас');
-    					var wareTo = me.generateLocalComboWithField('local_ware_house', 'ware_house', 'wareHouseID', 'name', 'Агуулахруу', 100, 'Агуулахруу');
-    					wareFrom.width = 300;
-    					wareTo.width = 300;
-    					wareFrom.setValue(rec.data['from']);
-						if (rec.data['from'] == 0)
-							wareFrom.setValue(5);
-    					wareTo.setValue(rec.data['to']);
-						if (rec.data['to'] == 0)
-							wareTo.setValue(1);
-					
-    					var storage_row = Ext.createWidget('form', {			        			        
-    				        bodyPadding: 5,
-    				        width: 320,
-    				        height: 240,
-    				        border: false,		        
-    				        fieldDefaults: {
-    				            labelAlign: 'left',
-    				            labelWidth: 85,
-    				            fieldWidth: 80,
-    				            allowBlank: false    				            
-    				        },
-    				        items: [wareFrom, wareTo, requestCount],
-    			            buttons: [{
-    			                    text: 'OK',
-    			                    handler: function() {			        			                    	
-    			                		for (i = 0; i < me.storage_temp_data.length; i++) {
-    			                			var record = me.storage_temp_data[i];    			                			
-    			                			if (record['productCode'] == productCode) {    			                				
-    			                				me.storage_temp_data[i] = {'productCode': productCode, 'requestCount':requestCount.getValue(), 'from': wareFrom.getValue(), 'to': wareTo.getValue()};
-    			                			}
-    			                		}
-    			                				                    			                    	
-    			                		me.storage_row_ds.loadData(me.storage_temp_data);
-    			                		
-    			                		win_row.hide();
-    			                    }
-    			            	},
-    			            	{
-    			                    text: Ext.sfa.translate_arrays[langid][327],
-    			                    handler: function() {
-    			                    	win_row.hide();
-    			                    }
-    			            	}
-    			            ]
-    				    });
-    									
-    					
-    					var win_row = Ext.widget('window', {
-    						title: Ext.sfa.renderer_arrays['renderProductCode'](productCode),			
-    						bodyPadding: 0,
-    						layout: 'fit',
-    						width: 320,
-    						height: 240,
-    						items: [storage_row]
-    					});
-    					
-    					win_row.show();
-    				}
-    			}
-    		}
-    	});
-    	
-    	return me.grid;
+    		], 
+			flex: 0.5,
+    		features:[
+    	          {
+    	        	  id: 'summary_storage_temp',
+    	        	  ftype: 'summary'
+    	          }
+    		]
+    	});    	
     },
     
     createToolbar : function() {
@@ -4213,7 +4312,7 @@ Ext.define('OSS.UserPlanComplete', {
     createGrid : function() {
     	var me = this;    					
 		
-		var users = this.generateRemoteComboWithFilter('_remote_section_users', 'user_all_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], mode);						
+		var users = this.generateRemoteComboWithFilter('_remote_section_users', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], mode);						
 		var planName = this.generateRemoteComboWithFilter('_remote_plan_names', 'plan_name', 'name', 'name', Ext.sfa.translate_arrays[langid][448], mode);		
 								
 		var u_fields2 = [];		
@@ -4549,12 +4648,24 @@ Ext.define('OSS.OrderGridWindowPre', {
     	}});
 
     	if (me.customerCode) 
-    		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,storageCount,availCount,requestCount,confirmedCount,price,orderAmount,wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount=0 and userCode='"+me.users.getValue()+"' and customerCode='"+me.customerCode+"' and ticketID="+me.ticketID+" and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
+    		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,storageCount,availCount,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount=0 and userCode='"+me.users.getValue()+"' and customerCode='"+me.customerCode+"' and ticketID="+me.ticketID+" and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
     			callback: function() {
     				me.store.each(function(rec){ rec.set('agree', true) })
     			}});
     },
-    
+   
+	loadStore2 : function() {
+    	var me = this;     	
+    	
+		if (me.users.getValue() != '')
+   			me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
+
+		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,storageCount,availCount,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount=0 and userCode='"+me.users.getValue()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
+			callback: function() {
+				me.store.each(function(rec){ rec.set('agree', true) })
+			}});
+    },
+	
     createStore : function() {
     	var me = this;
     	
@@ -4613,6 +4724,7 @@ Ext.define('OSS.OrderGridWindowPre', {
     	
     	me.cstore = Ext.create('Ext.data.JsonStore', {
     		fields: [        
+    		    {name: '_date', type: 'string'},
     		    {name: 'customerCode', type: 'string'},
     		    {name: 'ticketID', type: 'int'},
     		    {name: 'amount', type: 'int'},
@@ -4637,12 +4749,18 @@ Ext.define('OSS.OrderGridWindowPre', {
     		xtype: 'grid',
     		border: false,
     		columnLines: true,
-    		width: 340,
+    		width: 400,
     		split: true,
     		region: 'west',
     		features: [me.summary1],
     		store: me.cstore,    		
     		columns: [new Ext.grid.RowNumberer({width:30}), {
+                text     : 'Огноо',
+                width	 : 100,
+                sortable : true,
+                align	 : 'center',                               
+                dataIndex: '_date'                
+            },{
                 text     : Ext.sfa.translate_arrays[langid][466],
                 flex	 : 1,
                 sortable : true,                
@@ -4676,7 +4794,7 @@ Ext.define('OSS.OrderGridWindowPre', {
                 }
             }]            
     	});   
-    	
+
     	me.grid1.getSelectionModel().on('selectionchange', function(sm, selectedRecord) {
             if (selectedRecord.length) {
                 var rec = selectedRecord[0];
@@ -4741,6 +4859,13 @@ Ext.define('OSS.OrderGridWindowPre', {
 				handler: function() {
 					me.loadStore();
 				}
+			},
+			{
+				text: 'Бүгдийг харах',
+				iconCls: 'refresh',
+				handler: function() {
+					me.loadStore2();
+				}
 			},'-',{
 			text: Ext.sfa.translate_arrays[langid][421],
 			iconCls: 'icon-apply',
@@ -4748,49 +4873,7 @@ Ext.define('OSS.OrderGridWindowPre', {
 			handler: function() {	
 				var records = me.grid.getView().getSelectionModel().getSelection();
 				var drivers = me.grid2.getView().getSelectionModel().getSelection();
-				
-				if (drivers.length == 0) {
-					Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Ачих жолоочийг сонгоно уу !', null);
-					return;
-				}
-
-				if (records.length == 0) {
-					Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][541], function(btn, text){	                		
-						if (btn == 'yes'){	
-							var p = 0;
-							for (i = 0; i < me.store.getCount(); i++) {
-								var rec = me.store.getAt(i);
-								var userCode = rec.get('userCode');    	                			    	                		
-								var driver = drivers[0].get('userCode');    	                			    	                		
-								{
-									if (rec.get('agree') && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('requestCount')) {
-										var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('requestCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
-										me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
-										p = 1;
-									} else	                			
-									if (rec.get('confirmedCount') > 0 && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('confirmedCount')) {
-										var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('confirmedCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
-										
-										me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
-										p = 1;
-									}	                			
-								}
-							}
-
-							if (p == 1) {
-								Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][557], function() {	                				                				                			
-									me.loadStore();	 
-									me.loadStore1();
-									me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
-								});
-							}
-							else
-								Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
-						} else {
-				
-						}
-					});
-				}
+				me.acceptOrders(records, drivers);
 			}
 		},{
 			text: Ext.sfa.translate_arrays[langid][366],
@@ -4827,7 +4910,54 @@ Ext.define('OSS.OrderGridWindowPre', {
 			xtype: 'toolbar',
 			items: me.buttons
 		}];
-    }
+    },
+
+	acceptOrders: function(records, drivers) {
+		var me = this;
+		
+		if (drivers.length == 0) {
+			Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Ачих жолоочийг сонгоно уу !', null);
+			return;
+		}
+
+		//if (records.length == 0) {
+			Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][541], function(btn, text){	                		
+				if (btn == 'yes'){	
+					var p = 0;
+					for (i = 0; i < me.store.getCount(); i++) {
+						var rec = me.store.getAt(i);
+						var userCode = rec.get('userCode');    	                			    	                		
+						var driver = drivers[0].get('userCode');
+						{									
+							if (rec.get('agree') && rec.get('confirmedCount') > 0 && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('confirmedCount')) {
+								var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('confirmedCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
+								me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
+								p = 1;
+							} else
+							if (rec.get('agree') && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('requestCount')) {
+								var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('requestCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
+								me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
+								p = 1;
+							}
+						}
+					}
+
+					if (p == 1) {
+						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][557], function() {	                				                				                			
+							me.loadStore();	 
+							me.loadStore1();
+							me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
+						});
+					}
+					else
+						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
+				} else {
+		
+				}
+			});
+		//} else
+		//	Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
+	}
 });
 
 
@@ -5314,6 +5444,7 @@ Ext.define('OSS.RouteChanger', {
     
     createStore : function() {
     	var me = this;
+
     	me.customer_columns = [{name: 'code', type: 'string', title: Ext.sfa.translate_arrays[langid][369], width: 50},
 		                       {name: 'name', type: 'string', title: Ext.sfa.translate_arrays[langid][373], width:110, summaryType:'count'},
 		                       {name: 'location', type: 'string', title: Ext.sfa.translate_arrays[langid][372], width:120},
@@ -5335,7 +5466,12 @@ Ext.define('OSS.RouteChanger', {
 	            }
 			}
 	    });
-    	
+		
+		me.model = [];
+		me.model['columns'] = me.customer_columns;
+    	me.name = '_user_customer_list';
+		me.modelName = '_user_customer_list';
+
     	me.store1 = Ext.create('Ext.data.JsonStore', {
 	        model: 'customer_columns',	        
 	        proxy: {
@@ -5503,8 +5639,8 @@ Ext.define('OSS.RouteChanger', {
     createToolbar : function() {
     	var me = this;    	    	    	
     	me.users = generateLocalCombo('local_user_combo', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], 150);
-    	
-    	return [{
+
+		me.buttons = [{
             xtype: 'toolbar',
             items: [me.users, {
                 text: Ext.sfa.translate_arrays[langid][326],
@@ -5530,6 +5666,13 @@ Ext.define('OSS.RouteChanger', {
 		    	}
 		    }]
         }];
+
+    	me.addStandardButtons();
+
+		return [{
+			xtype: 'toolbar',
+			items: me.buttons
+		}];
     }
 });
 
@@ -6920,26 +7063,29 @@ Ext.define('OSS.PlanInsertWindow', {
         return win;               
     },  
 
-	initbase: function () {
+	initmans: function() {
 		var me = this;
 		me.store1.removeAll();	          		
     	for (i = 0; i < Ext.sfa.stores['user_list'].getCount(); i++) {
-			var record = Ext.sfa.stores['user_list'].getAt(i);			
-			alert(record.data['manager']+'1');
-			if (record.data['manager'] == logged) {
+			var record = Ext.sfa.stores['user_list'].getAt(i);						
+			if (record.data['_group'] == me.suvag.getValue()) {
 				me.store1.add({code: record.data['code']});		    					     		    				
     		}
     	}
-    	
+		me.grid1.getView().refresh();
+	},
+
+	initbase: function () {
+		var me = this;
     	me.store2.removeAll();
     	for (i = 0; i < Ext.sfa.stores['product_list'].getCount(); i++) {
 			var record = Ext.sfa.stores['product_list'].getAt(i);
 			if (record.data['vendor'] == section) {
-				me.store2.add({code: record.data['code'], count: 0, price: 0, amount: 0});	    				
+				var ptag = me.priceTag.getValue();
+				var price = Ext.sfa.renderer_arrays['renderPriceList'](record.get('code')+ptag);
+				me.store2.add({code: record.data['code'], count: 0, price: price, amount: 0});	    				
 			}
-    	}
-    	
-		me.grid1.getView().refresh();
+    	}    			
     	me.grid2.getView().refresh();
 	},
 	
@@ -6962,8 +7108,8 @@ Ext.define('OSS.PlanInsertWindow', {
 		Ext.regModel('plan_grid', { 
 			fields: [
 				{name: 'code', type: 'string'}, 
-				{name: 'count', type: 'int'},
 				{name: 'price', type:'int'}, 
+				{name: 'count', type: 'int'},
 				{name: 'amount', type: 'int'}	                 
 			]
 		});
@@ -6996,10 +7142,6 @@ Ext.define('OSS.PlanInsertWindow', {
 			]			     			
 		});
 		
-		me.cellEditing = new Ext.grid.plugin.CellEditing({
-			clicksToEdit: 1
-		});
-
 		me.grid2 = Ext.create('Ext.ux.LiveSearchGridPanel', {			    			
 			xtype: 'gridpanel',
 			border: false,	    			
@@ -7007,57 +7149,68 @@ Ext.define('OSS.PlanInsertWindow', {
 			split: true,
 			region: 'center',
 			store: me.store2,
-			plugins: [me.cellEditing],
+			plugins: [new Ext.grid.plugin.CellEditing({
+    	        clicksToEdit: 1,
+				pluginId: 'cellplugin',
+				listeners: {
+					'afteredit': function(e) {
+						
+					}
+				}
+    	    })],
 			features: [{
-				id: 'plan',
+				id: 'plan_product_insert',
 				ftype: 'summary'
 			}],
 			columns: [
+ 				  new Ext.grid.RowNumberer({width:30}),
 				  {
 					  text: Ext.sfa.translate_arrays[langid][345],
 					  dataIndex: 'code',
-					  align:'right',
-					  flex: 1,
+					  width: 200,
 					  renderer: Ext.sfa.renderer_arrays['renderProductCode']
 				  },
 				  {
 					  text: 'Үнэ',
 					  dataIndex: 'price',
 					  align:'right',
-					  width: 80,				  
-					  renderer: function(v, params, record) {
-						  var ptag = priceTag.getValue();
-						  return renderNumber(Ext.sfa.renderer_arrays['renderPriceList'](record.get('code')+ptag));
-					  }
+					  width: 80,
+					  renderer: Ext.sfa.renderer_arrays['renderMoney']
 				  },
 				  {
-					  text: Ext.sfa.translate_arrays[langid][347],
+					  text: Ext.sfa.translate_arrays[langid][6],
 					  dataIndex: 'count',
 					  align:'right',
-					  summaryType: 'sum',	        	  
+					  summaryType: 'sum',	     
+					  field: { 
+						  xtype: 'numberfield'
+					  },
 					  width: 90,
-					  renderer: function(v, params, record) {
-						  var ptag = priceTag.getValue();
-						  return renderNumber(truncate(record.get('amount') / Ext.sfa.renderer_arrays['renderPriceList'](record.get('code')+ptag)));
-					  }
+					  renderer: Ext.sfa.renderer_arrays['renderNumber']
 				  }, 
 				  {
-					  text: Ext.sfa.translate_arrays[langid][433],
+					  text: Ext.sfa.translate_arrays[langid][5],
 					  dataIndex: 'amount',
 					  align:'right',
-					  width: 120,
-					  field: { 
-						  xtype: 'currencyfield',
-						  decimalPrecision:2
+					  width: 120,					  
+					  summaryType: function(records){
+						  var i = 0,
+							  length = records.length,
+							  total = 0,
+							  record;
+
+						  for (; i < length; ++i) {
+							  record = records[i];
+							  total += record.get('count') * record.get('price');
+						  }
+						  return total;
 					  },
-					  summaryType: 'sum',
-					  renderer: Ext.sfa.renderer_arrays['renderMoney'],
+					  renderer: Ext.sfa.renderer_arrays['renderPriceMoney'],
 					  summaryRenderer: Ext.sfa.renderer_arrays['renderTMoney']
 				  }
 			]
 		});	
 				
-		me.initbase();
 		me.panel = Ext.widget('form', {
 			border: false,
 			layout: {
@@ -7085,29 +7238,30 @@ Ext.define('OSS.PlanInsertWindow', {
 			triggerAction: 'all'
 		});	
 		
-		me.priceTag.on('change', function(e) {
+		me.priceTag.on('change', function(e) {		
+			me.initbase();
 			me.grid2.getView().refresh();
 		});
+		me.priceTag.setValue(1);
 
 		me.suvag = Ext.create('Ext.form.ComboBox', {	        		
-			width: 200,
-			name: 'section',        
+			width: 120,
+			name: '_group',        
 			margins: '0 0 0 5',
 			xtype: 'combo',
-			store: Ext.sfa.stores['section'],
+			store: Ext.sfa.stores['user_type'],
 			displayField: 'descr',
-			valueField: 'section',
+			valueField: '_group',
 			value: mode,
-			hidden: true,
 			queryMode: 'local',
 			triggerAction: 'all',
-			emptyText: Ext.sfa.translate_arrays[langid][592],
-			listeners: {
-				select: function() {
-					
-				}
-			}
+			emptyText: Ext.sfa.translate_arrays[langid][592]
 		});	 
+		me.suvag.on('change', function(e) {
+			me.initmans();
+			me.grid1.getView().refresh();
+		});		
+		me.suvag.setValue(1);
 
 		me.dateMenu = Ext.create('Ext.menu.DatePicker', {
 			text: currentDate,
@@ -7171,15 +7325,14 @@ Ext.define('OSS.PlanInsertWindow', {
 			width: 150
 		}); 
 
-		me.buttons = [me.startBtn,me.endBtn,me.planName,me.priceTag,
+		me.buttons = [me.startBtn,me.endBtn,me.suvag,me.planName,me.priceTag,
 			{
 				text: Ext.sfa.translate_arrays[langid][417],
 				iconCls: 'icon-add',
 				handler: function() {               
 					var users = '';
 					var records = me.grid1.getSelectionModel().getSelection();
-					var form = this.up('form').getForm();
-					var params = form.getValues(true)+'&startDate='+me.startBtn.getText()+'&endDate='+me.endBtn.getText();
+					var params = 'planName='+me.planName.getValue()+'&_group='+me.suvag.getValue()+'&startDate='+me.startBtn.getText()+'&endDate='+me.endBtn.getText();
 					
 					Ext.each(records, function(record){
 						users += record.get('code')+',';		                    		
@@ -7188,11 +7341,12 @@ Ext.define('OSS.PlanInsertWindow', {
 					var pro = '';
 					for (i = 0; i < me.store2.getCount(); i++) {	                    		
 						var rec = me.store2.getAt(i);
-						if (rec.data['amount'] > 0)
-							pro = pro + ('productCode='+rec.data['code']+'&amount='+rec.data['amount']+'&price='+me.priceTag.getValue()+',');	                    		
+						if (rec.data['count'] > 0)
+							pro = pro + ('productCode='+rec.data['code']+'&count='+rec.data['count']+'&price='+me.priceTag.getValue()+',');	                    		
 					}	                    		                    	                    
 									
-					if (pro != '' && planName.getValue() != '' && users != '') {
+					alert(pro+' '+me.planName.getValue()+' '+users);
+					if (pro != '' && me.planName.getValue() != '' && users != '') {
 						me.action_store.load({params:{xml:_donate('business_plan', 'WRITER', 'B_Plan', pro, params, users)}, 
 							callback: function() {
 							}});
@@ -7350,7 +7504,7 @@ Ext.define('OSS.LeaseCustomerMonthly', {
     
     loadStore: function () {    
     	var me = this;    
-    	me.store.load({params:{xml:_donate('_lease-customer-monthly-data', 'SELECT', ' ', ' ', ' ', selectedYear+','+selectedMonthRange)},
+    	me.store.load({params:{xml:_donate('_lease-customer-monthly-data', 'SELECT', ' ', ' ', ' ', me.users.getValue())},
     		callback: function(data) {
     			
     		}});
@@ -7367,7 +7521,7 @@ Ext.define('OSS.LeaseCustomerMonthly', {
     	me.model = Ext.sfa.staticModels['ZeelMiniCustomer'];   	
     	me.store = me.model['readStore'];
 
-		me.grid.reconfigure(me.store, me.model['columns']);
+		me.grid.reconfigure(me.store, me.createHeaders(me.model['columns']));
 		me.loadStore();
     },
 
@@ -7376,7 +7530,7 @@ Ext.define('OSS.LeaseCustomerMonthly', {
     	me.model = Ext.sfa.staticModels['ZeelCustomer'];   	
     	me.store = me.model['readStore'];
 
-		me.grid.reconfigure(me.store, me.model['columns']);
+		me.grid.reconfigure(me.store, me.createHeaders(me.model['columns']));
 		me.loadStore();
     },
 
@@ -7387,13 +7541,13 @@ Ext.define('OSS.LeaseCustomerMonthly', {
 		    ftype: 'summary',
 			disabled: true
 		}); 
-    	me.grid = Ext.create('Ext.ux.LiveSearchGridPanel', {
+    	me.grid = Ext.create('Ext.grid.Panel', {
     		xtype: 'grid',
     		border: false,
     		store: me.store,
     		columnLines: true,
 			features: [me.summary],
-    		columns: me.createHeadersWithNumbers(me.model['columns']),
+    		columns: me.createHeaders(me.model['columns']),
     		dockedItems: me.createToolbar()
     	});
     	
@@ -7552,7 +7706,7 @@ Ext.define('OSS.CustomerSalesReport', {
             win = desktop.createWindow({
                 id: this.id,
                 title:this.title,
-                width:850,
+                width:900,
                 height:500,
                 iconCls: 'icon-grid',
                 animCollapse:false,
@@ -7614,7 +7768,16 @@ Ext.define('OSS.CustomerSalesReport', {
 			plugins: [new Ext.grid.plugin.CellEditing({
     	        clicksToEdit: 1,
 				pluginId: 'cellplugin'				
-    	    })]
+    	    })],
+			viewConfig: {
+				stripeRows: true,
+				trackOver: false,
+				listeners: {
+					itemdblclick: function(dv, record, item, index, e) {
+						ossApp.callSearchModule(record.get('customerCode'));
+					}
+				}
+			}
     	});    			
     },
     
@@ -7639,15 +7802,20 @@ Ext.define('OSS.CustomerSalesReport', {
 				iconCls: 'icon-apply',
 				handler: function() {
 					var params = '';
+					var params1 = '';
 					for (i = 0; i < me.store.getCount(); i++) {
 						var rec = me.store.getAt(i);
-						if (rec.get('rank') > 0) {
+						if (rec.get('rank') > 0)
 							params += rec.get('customerCode')+':'+rec.get('rank')+',';
-						}
+						
+						if (rec.get('plan') > 0)						
+							params1 += rec.get('customerCode')+':'+rec.get('plan')+',';						
 					}
 					
+					params = params+';'+params1;
+
 					if (params.length > 0) {
-						me.store_action.load({params:{xml:_donate('_update_customer_rank', 'SELECT', ' ', ' ', ' ', params)},
+						me.store_action.load({params:{xml:_donate('_update_customer_rank_plan', 'SELECT', ' ', ' ', ' ', params)},
 							callback: function(data) {
 								Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Амжилттай !', null);
 							}
@@ -7866,6 +8034,741 @@ Ext.define('OSS.PromotionCustomer', {
 						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
 				}
 			}
+		];	
+		me.addStandardButtons();
+
+    	return [{
+			xtype: 'toolbar',
+			items: me.buttons
+		}];
+    }
+});
+
+
+Ext.define('OSS.OrdersReport', {
+    extend: 'OSS.ExtendModule',
+    id:'orders-report-win',        
+    
+    init : function(){  	
+    	this.title = Ext.sfa.translate_arrays[langid][639];        
+    },
+
+    createWindow : function(){
+    	var desktop = this.app.getDesktop();
+        var win = desktop.getWindow(this.id);        
+        if(!win){        	        	
+			this.createGrid();
+            win = desktop.createWindow({
+                id: this.id,
+                title:this.title,
+                width:850,
+                height:500,
+                iconCls: 'icon-grid',
+                animCollapse:false,
+                constrainHeader:true,
+                layout: {
+					type: 'border',
+					align: 'stretch'
+				},
+                items: [this.grid],
+	    		dockedItems: this.createToolbar()
+            });
+        }
+ //       this.loadStore();
+        win.show();
+        return win;               
+    },   
+
+    loadStore: function () {    
+    	var me = this;    
+
+		me.store.load({params:{xml:_donate('_user_orders', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText()+','+me.end.getText())},
+    		callback: function(data) {
+    			
+    		}});
+    },
+    
+    createStore : function() {
+    	var me = this;
+    	me.model = me.generateModel('User_Orders', 'user_orders');
+    	me.store = me.model['readStore'];
+
+    },    	
+
+    createGrid : function() {
+    	var me = this;
+    	me.createStore();    	
+		me.summary = Ext.create('Ext.grid.feature.Summary',{
+		    ftype: 'summary',
+			disabled: true
+		}); 
+    	me.grid = Ext.create('Ext.ux.LiveSearchGridPanel', {
+    		xtype: 'grid',
+    		border: false,
+    		store: me.store,
+			region: 'center',
+    		columnLines: true,
+			split: true,
+			features: [me.summary],
+    		columns: me.createHeadersWithNumbers(me.model['columns'])
+    	});    			
+    },
+    
+    createToolbar : function() {
+    	var me = this;    	    	    	
+    	me.users = me.generateRemoteComboWithFilter('_remote_section_users', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], mode);
+    	me.start = me.generateDateField('uo_date1',currentDate);
+    	me.end = me.generateDateField('uo_date2',nextDate);
+    	
+		me.buttons = [me.users, me.start, me.end, {
+				text: Ext.sfa.translate_arrays[langid][326],
+				iconCls: 'refresh',
+				handler: function() {
+					if (me.users.getValue() != 'null') {
+						me.loadStore();            	
+					} else
+						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
+				}
+			}
+		];	
+		me.addStandardButtons();
+
+    	return [{
+			xtype: 'toolbar',
+			items: me.buttons
+		}];
+    }
+});
+
+
+Ext.define('OSS.CustomPriceWindow', {
+    extend: 'OSS.ExtendModule',
+    id:'custom-price-window',        
+    
+    init : function(){  	
+    	this.title = Ext.sfa.translate_arrays[langid][272];        
+    },
+
+    createWindow : function(){
+    	var desktop = this.app.getDesktop();
+        var win = desktop.getWindow(this.id);        
+        if(!win){        	        	
+			this.createGrid();
+            win = desktop.createWindow({
+                id: this.id,
+                title:this.title,
+                width:650,
+                height:500,
+                iconCls: 'icon-grid',
+                animCollapse:false,
+                constrainHeader:true,
+                layout: {
+					type: 'border',
+					align: 'stretch'
+				},
+                items: [this.grid],
+	    		dockedItems: this.createToolbar()
+            });
+        }
+ //       this.loadStore();
+        win.show();
+        return win;               
+    },   
+
+    loadStore: function () {    
+    	var me = this;    
+		me.name = 'Price';
+		me.xml = _donate('_custom_price_list', 'SELECT', ' ', ' ', ' ', me.price_types.getValue()+','+mode);
+		me.store.getProxy().extraParams = {xml:_donate('_custom_price_list', 'SELECT', ' ', ' ', ' ', me.price_types.getValue()+','+mode)};
+		me.store.loadPage(1);
+    },
+    
+    createStore : function() {
+    	var me = this;
+    	me.model = me.generateModel('Price', 'Price');
+    	me.store = me.model['readStore'];
+
+    },    	
+
+    createGrid : function() {
+    	var me = this;
+    	me.createStore();    	
+		
+    	me.grid = Ext.create('Ext.grid.Panel', {
+    		xtype: 'grid',
+    		border: false,
+    		store: me.store,
+			region: 'center',
+    		columnLines: true,
+			split: true,
+			plugins: [new Ext.grid.plugin.CellEditing({
+    	        clicksToEdit: 1,
+				pluginId: 'cellplugin',
+				listeners: {
+					'afteredit': function(editor, e) {
+						var record = e.record;
+						record.set("price", e.record.get("unit_price")*e.record.get("unit")); 
+
+						var auth = make_base_auth();
+						var params = "id="+record.get("id")+",productCode="+record.get("productCode")+",customerType="+record.get("customerType")+",unit="+record.get("unit")+",unit_price="+record.get("unit_price")+",price="+record.get("price");
+						Ext.Ajax.request({
+						   url:'httpGW?xml='+_donate('form_action','WRITER','Price',' ',' ',params),    // where you wanna post
+						   success: function() { 
+							  Ext.MessageBox.alert('Ажмилттай', 'Changes saved successfully.', null); 			   
+						   },
+						   failure: function() {  
+							  Ext.MessageBox.alert('Амжилтгүй', 'Not success !', null);
+						   },
+						 //  headers : { Authorization : auth },
+						   method: 'GET'
+						});
+					}
+				}
+    	    })],
+    		columns: me.createHeadersWithNumbers(me.model['columns']),			
+			bbar: Ext.create('Ext.PagingToolbar', {
+				store: me.store,
+				displayInfo: true,
+				displayMsg: '{0}-{1} of {2}',
+				emptyMsg: "Empty !",
+				items: [{
+						text: 'Хайлт : '				
+					},{
+						xtype: 'textfield',
+						width: 150,
+						readOnly: false,
+						listeners: {
+							 change: {
+								 fn: me.onTextFieldChange_,
+								 scope: this,
+								 buffer: 200
+							 }
+						}
+					},'->'
+				]
+			})
+    	});    			
+    },
+    
+    createToolbar : function() {
+    	var me = this;    	 
+    	me.price_types = me.generateLocalCombo('local_customerType_combo', 'price_types', 'id', 'descr', Ext.sfa.translate_arrays[langid][392], 100);
+    	
+		me.buttons = [me.price_types,{
+				text: Ext.sfa.translate_arrays[langid][326],
+				iconCls: 'refresh',
+				handler: function() {
+					if (me.price_types.getValue() != 'null') {
+						me.loadStore();            	
+					} else
+						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
+				}
+			}
+		];	
+		me.addStandardButtons();
+
+    	return [{
+			xtype: 'toolbar',
+			items: me.buttons
+		}];
+    }
+});
+
+
+
+Ext.define('OSS.ReportVersion_1', {
+    extend: 'OSS.ExtendModule',
+    id:'report-version-one',        
+    
+    init : function(){  	
+    	this.title = 'Харилцагчдын нэгдсэн тайлан';        
+    },
+
+    createWindow : function(){
+    	var desktop = this.app.getDesktop();
+        var win = desktop.getWindow(this.id);        
+        if(!win){        	        	
+			this.createGrid();
+            win = desktop.createWindow({
+                id: this.id,
+                title:this.title,
+                width:950,
+                height:550,
+                iconCls: 'icon-grid',
+                animCollapse:false,
+                constrainHeader:true,
+                layout: {
+					type: 'border',
+					align: 'stretch'
+				},
+                items: [this.grid],
+	    		dockedItems: this.createToolbar()
+            });
+        }
+        win.show();
+        return win;               
+    },   
+
+    loadStore: function () {    
+    	var me = this;    
+		me.store.load({params:{xml:_donate('_report_version_1', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText()+','+me.end.getText())},
+    		callback: function(data) {
+    			
+    		}});
+    },
+    
+    createStore : function() {
+    	var me = this;
+		me.name = 'Report_Version_1';
+		me.modelName = '_report_version_1';
+    	me.model = Ext.sfa.staticModels['Report_Version_1'];    	
+    	me.store = me.model['readStore'];
+    },    	
+
+    createGrid : function() {
+    	var me = this;
+    	me.createStore();    	
+
+		me.grouping = Ext.create('Ext.grid.feature.GroupingSummary',{
+		    ftype: 'groupingsummary',
+		    groupHdTpl: '{name} ({rows.length} '+Ext.sfa.translate_arrays[langid][310]+')',
+		    hideGroupedHeader: true
+		});
+		
+		me.summary = Ext.create('Ext.grid.feature.Summary',{
+		    ftype: 'summary'
+		}); 
+
+    	me.grid = Ext.create('Ext.grid.Panel', {
+    		xtype: 'grid',
+    		border: false,
+    		store: me.store,
+			region: 'center',
+    		columnLines: true,
+			features: [me.grouping, me.summary],
+			split: true,			
+    		columns: me.createHeadersWithNumbers(me.model['columns'])			
+    	});    			
+    },
+    
+    createToolbar : function() {
+    	var me = this;    	 
+    	me.users = me.generateRemoteComboWithFilter('_remote_section_users', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], mode);    	
+    	me.start = me.generateDateField('rv1_date1',firstDay);
+    	me.end = me.generateDateField('rv1_date2',nextDate);
+
+		me.buttons = [me.users,me.start,me.end,{
+				text: Ext.sfa.translate_arrays[langid][326],
+				iconCls: 'refresh',
+				handler: function() {
+					if (me.users.getValue() != 'null') {
+						me.loadStore();            	
+					} else
+						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгоно уу !', null);
+				}
+			}
+		];	
+		me.addStandardButtons();
+
+    	return [{
+			xtype: 'toolbar',
+			items: me.buttons
+		}];
+    }
+});
+
+
+
+Ext.define('OSS.OrderImportManual', {
+    extend: 'OSS.ExtendModule',
+    id:'order-import-manual',        
+    
+    init : function(){  	
+    	this.title = Ext.sfa.translate_arrays[langid][293];        
+    },
+	
+	initStore: function() {
+		var me = this;
+		me.order_temp_data = [];
+		var t = 0;
+		me.ow = '';
+		me.op = '';
+		for (i = 0; i < Ext.sfa.stores['product_list'].getCount(); i++) {
+			var record = Ext.sfa.stores['product_list'].getAt(i);
+			me.order_temp_data[t] = {'brand':record.data['vendor'],'productCode':record.data['code'], 'requestCount':0, 'price': 0, 'amount': 0, 'wareHouseID': 0, 'pr': 0};
+			t++;			
+		}
+		
+		me.order_row_ds = Ext.create('Ext.data.JsonStore', {
+			fields: [
+				{name: 'brand'},
+				{name: 'productCode'},
+				{name: 'requestCount',  type: 'int'},
+				{name: 'wareHouseID',  type: 'int'},
+				{name: 'price',  type: 'int'},
+				{name: 'amount', type: 'float'},
+				{name: 'pr', type: 'int'}
+			]
+		});
+	},
+	
+	clearData : function(b) {		
+		var me = this;
+		var t = 0;
+		me.order_temp_data = [];
+		for (i = 0; i < Ext.sfa.stores['product_list'].getCount(); i++) {
+			var record = Ext.sfa.stores['product_list'].getAt(i);			
+			me.order_temp_data[t] = {'brand':record.data['vendor'],'productCode':record.data['code'], 'requestCount':0, 'price': 0, 'amount': 0, 'wareHouseID': 0, pr: 0};
+			t++;		
+		}                	                	
+    	
+    	me.order_row_ds.loadData(me.order_temp_data);
+    	
+    	if (b)
+    		me.users.setValue('');    	
+	},
+
+    createWindow : function(){
+    	var desktop = this.app.getDesktop();
+        var win = desktop.getWindow(this.id);        
+        if(!win){        	        	
+			this.createGrid();
+            win = desktop.createWindow({
+                id: this.id,
+                title:this.title,
+                width:900,
+                height:550,
+                iconCls: 'icon-grid',
+                animCollapse:false,
+                constrainHeader:true,
+                layout: {
+					type: 'border',
+					align: 'stretch'
+				},
+                items: [this.grid1, this.grid],
+	    		dockedItems: this.createToolbar()
+            });
+        }
+        win.show();
+        return win;               
+    },   
+
+    loadStore: function () {    
+    	var me = this;    
+		me.cstore.load({params:{xml:_donate('_user_customer_list1', 'SELECT', ' ', ' ', ' ', me.users.getValue())},
+    		callback: function(data) {
+    			
+    		}});
+    },
+    
+    createStore : function() {
+    	var me = this;
+		me.initStore();
+		me.cstore = Ext.create('Ext.data.JsonStore', {
+    		fields: [        
+    		    {name: 'code', type: 'string'},
+    		    {name: 'customerName', type: 'string'}
+    	    ],	        
+    	    proxy: {
+    			type: 'ajax',
+    			url: 'httpGW',
+    	        reader: {
+    				type: 'json',
+    	            root:'items',
+    	            totalProperty: 'results'
+    	        }	            
+    		}
+    	});
+    },    	
+
+    createGrid : function() {
+    	var me = this;
+    	me.createStore();    	
+
+		me.grouping = Ext.create('Ext.grid.feature.GroupingSummary',{
+		    ftype: 'groupingsummary',
+		    groupHdTpl: '{name} ({rows.length} '+Ext.sfa.translate_arrays[langid][310]+')',
+		    hideGroupedHeader: true
+		});
+		
+		me.summary = Ext.create('Ext.grid.feature.Summary',{
+		    ftype: 'summary'
+		}); 
+
+    	me.grid = Ext.create('Ext.grid.Panel', {
+    		xtype: 'grid',
+    		border: false,
+    		store: me.order_row_ds,
+			region: 'center',
+    		columnLines: true,
+			features: [me.grouping, me.summary],
+			split: true,			
+    		columns: [new Ext.grid.RowNumberer({width:30}), 
+				{			
+					text: 'Төрөл',			
+					dataIndex: 'brand',
+					width: 60
+				},
+				{			
+					text: Ext.sfa.translate_arrays[langid][345],			
+					dataIndex: 'productCode',
+					flex: 1,
+					renderer: Ext.sfa.renderer_arrays['renderProductCode']	   			   	
+				},
+				{			
+					text: Ext.sfa.translate_arrays[langid][413],			
+					dataIndex: 'requestCount',
+					align: 'right',
+					summaryType: 'sum',
+					renderer: Ext.sfa.renderer_arrays['renderNumber'],
+					summaryRenderer: Ext.sfa.renderer_arrays['renderTNumber'],
+					width: 60	   				   			
+				},{			
+					text: Ext.sfa.translate_arrays[langid][392],			
+					dataIndex: 'price',
+					align: 'right',	   			
+					renderer: Ext.sfa.renderer_arrays['renderMoney'],	   			
+					width: 70	   				   			
+				},{			
+					text: 'Дүн',			
+					dataIndex: 'amount',
+					align: 'right',	   	
+					summaryType: 'sum',
+					renderer: Ext.sfa.renderer_arrays['renderMoney'],	
+					summaryRenderer: Ext.sfa.renderer_arrays['renderTNumber'],
+					width: 100	   				   			
+				},{			
+					text: Ext.sfa.translate_arrays[langid][509],			
+					dataIndex: 'wareHouseID',
+					align: 'right',	   			
+					renderer: Ext.sfa.renderer_arrays['renderWareHouseID'],	   			
+					width: 80	   				   			
+				}
+			],
+			listeners: {
+				itemclick: function(grid, record, item, index, e) {        
+					var rec = record;
+					if (rec) {
+						var productCode = rec.data['productCode'];										
+											
+						var requestCount = Ext.create('Ext.form.NumberField', {
+							xtype: 'numberfield',
+							fieldLabel: Ext.sfa.translate_arrays[langid][347],
+							name: 'requestCount',
+							minValue: 0,
+							maxValue: 900000,
+							hideTrigger: true,
+							value: rec.data['requestCount'],
+							align: 'right',
+							hasfocus:true,
+							allowBlank: false,
+							allowDecimals: true,
+							decimalPrecision: 2,
+							listeners: {
+								afterrender: function(field) {
+									requestCount.focus(false, 200);
+								}
+							  }
+						});																		
+						
+						var price = Ext.create('Ext.ux.form.NumericField', {		                
+							fieldLabel: Ext.sfa.translate_arrays[langid][392],
+							name: 'price',
+							minValue: 0,
+							maxValue: 900000,
+							hideTrigger: true,
+							value: rec.data['price'],
+							xtype: 'currencyfield',
+							allowBlank: false,
+							decimalPrecision:2,
+							align: 'right',
+							allowDecimals: true		                	               
+						});		
+						
+						requestCount.on('change', function(e) {
+							for (i = 0; i < Ext.sfa.stores['price_list'].getCount(); i++) {
+								var record = Ext.sfa.stores['price_list'].getAt(i);
+								if (record.data['productCode'] == productCode && record.data['customerType'] == price_list.getValue())
+									price.setValue(record.data['price']);
+							}    
+						});
+						
+						var wareHouse = generateRemoteComboWithFilter('_remote_ware_house', 'ware_house', 'wareHouseID', 'name', Ext.sfa.translate_arrays[langid][509], mode);
+						if (rec.data['wareHouseID'] != 0)
+							wareHouse.setValue(rec.data['wareHouseID']);
+						
+						if (me.ow != 0)
+							wareHouse.setValue(me.ow);
+						
+						wareHouse.allowBlank = false;
+						var price_list = generateLocalComboWithCaption('local_customerType_combo', 'price_types', 'id', 'descr', Ext.sfa.translate_arrays[langid][392], 100);
+						if (rec.data['pr'] != 0)
+							price_list.setValue(rec.data['pr']);
+						price_list.allowBlank = false;
+						if (me.op != 0)
+							price_list.setValue(me.op);
+						
+						price_list.on('change', function(e) {
+							for (i = 0; i < Ext.sfa.stores['price_list'].getCount(); i++) {
+								var record = Ext.sfa.stores['price_list'].getAt(i);				    		
+								if (record.data['productCode'] == productCode && record.data['customerType'] == price_list.getValue())
+									price.setValue(record.data['price']);
+							}    
+						});
+						
+						wareHouse.fieldLabel = 'Агуулах';
+						price_list.fieldLabel = 'Үнэ';
+						
+						var order_row = Ext.createWidget('form', {			        			        
+							bodyPadding: 5,				        
+							border: false,
+							fieldDefaults: {
+								labelAlign: 'left',
+								labelWidth: 105,
+								fieldWidth: 100,
+								anchor: '100%'
+							},
+							items: [requestCount, price_list, price, wareHouse],
+							buttons: [{
+									text: 'Оруулах',
+									handler: function() {			                    	
+										if (requestCount.getValue() > 0 && wareHouse.getValue() > 0) {
+											me.ow = wareHouse.getValue();
+											me.op = price_list.getValue();
+											for (i = 0; i < me.order_temp_data.length; i++) {
+												var record = me.order_temp_data[i];
+												if (record['productCode'] == productCode)		                				
+													me.order_temp_data[i] = {'brand':record['vendor'], 'productCode':productCode, 'requestCount':requestCount.getValue(), 'price': price.getValue(), 'amount': (requestCount.getValue()*price.getValue()), 'wareHouseID': wareHouse.getValue(), 'pr': price_list.getValue()};	
+											}
+																											
+											me.order_row_ds.loadData(me.order_temp_data);
+											
+											win_row.hide();
+										}
+									}
+								},
+								{
+									text: Ext.sfa.translate_arrays[langid][545],
+									handler: function() {
+										win_row.hide();
+									}
+								}
+							]
+						});
+										
+						
+						var win_row = Ext.widget('window', {
+							title: Ext.sfa.renderer_arrays['renderProductCode'](productCode),
+							bodyPadding: 0,
+							border: false,
+							layout: 'fit',
+							modal: true,
+							width: 300,
+							height: 210,
+							items: [order_row]
+						});
+						win_row.show();
+					}
+				}
+			}
+    	}); 
+			
+		me.grid1 = Ext.create('Ext.grid.Panel', {
+    		xtype: 'grid',
+    		border: false,
+    		store: me.cstore,
+			region: 'west',
+			width: 300,
+    		columnLines: true,
+			split: true,			
+    		columns: [new Ext.grid.RowNumberer({width:30}), 
+				{			
+					text: 'Код',			
+					dataIndex: 'code',
+					width: 60
+				},
+				{			
+					text: Ext.sfa.translate_arrays[langid][441],			
+					dataIndex: 'customerName',
+					flex: 1
+				}
+			]			
+    	});  
+
+		me.grid1.getSelectionModel().on('selectionchange', function(sm, selectedRecord) {
+            if (selectedRecord.length) {
+                me.selectedCustomer = selectedRecord[0];
+                me.clearData(false);
+            }
+        });    
+    },
+    
+    createToolbar : function() {
+    	var me = this;    	 
+
+    	me.users = me.generateRemoteComboWithFilter('_remote_section_users', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], mode);    	
+    	me.ognoo = me.generateDateField('order_import_date',firstDay);
+
+		me.buttons = [me.ognoo,me.users,{
+				text: Ext.sfa.translate_arrays[langid][326],
+				iconCls: 'refresh',
+				handler: function() {
+					me.loadStore();
+				}
+			}, {
+				text: Ext.sfa.translate_arrays[langid][417],
+				iconCls: 'icon-apply',
+				handler: function() {
+					var userCode = me.users.getValue();
+                	
+                	if (isNotNull(userCode)) {
+                		Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][328], Ext.sfa.translate_arrays[langid][590], function(btn, text){	                		
+                			if (btn == 'yes') {                
+                					var ticketID = getTicketId();
+			                		var action_order_temp = Ext.create('Ext.data.JsonStore', {                 	                         	        
+			                 	        proxy: {
+			                 				type: 'ajax',
+			                 				url: 'httpGW',
+			                 	            writer: {
+			                 					type: 'json'                 	                
+			                 	            }	            
+			                 			}
+			                 	    });	
+			                		var date = me.ognoo.getText();
+			                		var sent = false;			                		
+			                		for (i = 0; i < me.order_row_ds.getCount(); i++) {
+			                			var rec = me.order_row_ds.getAt(i);
+			                			
+			                			if (rec.data['requestCount'] > 0) {
+			                				sent = true;
+			                				action_order_temp.load({params:{xml:_donate('insert', 'WRITER', 'Orders', '_date,userCode,customerCode,productCode,requestCount,price,wareHouseID,ticketID', 
+													   'd'+date+',s'+userCode+',s'+me.selectedCustomer.get('code')+',s'+rec.data['productCode']+',i'+rec.data['requestCount']+',f'+rec.data['price']+',i'+rec.data['wareHouseID']+',i'+ticketID, ' ')}});
+			                			}
+			                		}
+			                		
+			                		if (!sent)
+			                			Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][588], 'Амжилгүй ! Захиалга оруулаагүй байна !', null);
+			                		else
+			                			Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][328], Ext.sfa.translate_arrays[langid][557], function() {
+			                				me.clearData(true);
+			                			});			                	
+                			}
+                			else {
+                		
+                			}
+                		});
+                	} else {
+	                	Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][588], Ext.sfa.translate_arrays[langid][470], null);
+	                }
+				}
+			},
+			{
+                text: Ext.sfa.translate_arrays[langid][471],
+                iconCls: 'icon-delete',
+                handler: function(){                	        	    	
+                	me.clearData(true);
+                }
+            }
 		];	
 		me.addStandardButtons();
 

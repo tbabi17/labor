@@ -38,7 +38,11 @@ Ext.define('Ext.ux.desktop.App', {
 		'OSS.PlanDeleteWindow',
 		'OSS.LeaseCustomerMonthly',
 		'OSS.CustomerSalesReport',
-		'OSS.StorageToStorage'
+		'OSS.StorageToStorage',
+		'OSS.OrdersReport',
+		'OSS.CustomPriceWindow',
+		'OSS.ReportVersion_1',
+		'OSS.OrderImportManual'
     ],
 
 	isReady:false,
@@ -120,7 +124,11 @@ Ext.define('Ext.ux.desktop.App', {
 			new OSS.PlanDeleteWindow(),
 			new OSS.LeaseCustomerMonthly(),
 			new OSS.CustomerSalesReport(),
-			new OSS.StorageToStorage()
+			new OSS.StorageToStorage(),
+			new OSS.OrdersReport(),
+			new OSS.CustomPriceWindow(),
+			new OSS.ReportVersion_1(),
+			new OSS.OrderImportManual()
         ];
     },
 
@@ -206,7 +214,7 @@ Ext.define('Ext.ux.desktop.App', {
     	Ext.create('Ext.Window', {
             title: 'Програмын тухай',
             width: 380,
-            height: 150,                        
+            height: 180,                        
             modal: true,            
             layout: 'fit',
             items: {
@@ -214,7 +222,8 @@ Ext.define('Ext.ux.desktop.App', {
                 html: '<html><head><style>body {background-image:url(\'images/mxc.jpg\');}</style></head>'+
                 	 	'<body><p align="center" style="background-image:url(\'images/mxc.jpg\'); padding:30px; line-height: 18px">'+
       	  						'Optimal Sales System (4.0.31013)<br>'+
-      	  						'&copy 2011-2013 MXC LLC. All rights reserved (Монгол Улс)'+
+      	  						'&copy 2011-2013 MXC LLC. All rights reserved (Монгол Улс)</br>'+
+      	  						'<a href="external/update.zip" target="_blank">update</a>'+
       	  				'</p></body>'+
       	  			  '</html>'
             }

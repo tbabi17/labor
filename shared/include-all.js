@@ -42,39 +42,26 @@
     //css	
     document.write('<link rel="stylesheet" type="text/css" href="'+path+'resources/base.css"/>');
     document.write('<link rel="stylesheet" type="text/css" href="shared/style.css"/>');
-    document.write('<link rel="stylesheet" type="text/css" href="resources/ext-theme-gray/ext-theme-gray-all.css"/>');
+    document.write('<link rel="stylesheet" type="text/css" href="resources/ext-theme-classic/ext-theme-classic-all.css"/>');
     document.write('<link rel="stylesheet" type="text/css" href="resources/css/sink.css"/>');
     document.write('<link rel="stylesheet" type="text/css" href="ux/css/LiveSearchGridPanel.css"/>');
     
 	//scripts
     document.write('<script type="text/javascript" src="'+path+'shared/ext-all-debug.js"></script>');
-	document.write('<script type="text/javascript" src="https://maps.google.com/maps?file=api&amp;v=2&amp;sensor=true&amp;key=AIzaSyDx-jDIEWzJ5J-DHPwHeq1CXkazpB0Q0Pk"></script>'); 	
-	//document.write('<script type="text/javascript" src="ux/GMapPanel.js"></script>'); 
-
 
 	//settings
 	document.write('<script type="text/javascript" src="'+path+'extjs/Classes.js"></script>');
 	document.write('<script type="text/javascript" src="js/init.js"></script>'); 
 	document.write('<script type="text/javascript" src="'+path+'abstract/IntialFunctions.js"></script>'); 
 	
-
-	//main classes
-	
-	document.write('<script type="text/javascript" src="'+path+'abstract/ModelNames.js"></script>'); 
-	document.write('<script type="text/javascript" src="'+path+'abstract/GenerateObjects.js"></script>'); 
-	document.write('<script type="text/javascript" src="'+path+'abstract/RenderArrays.js"></script>'); 
-	document.write('<script type="text/javascript" src="'+path+'abstract/GenerateObjects.js"></script>'); 
-	document.write('<script type="text/javascript" src="'+path+'abstract/Models.js"></script>'); 
+	//main classes	
 	document.write('<script type="text/javascript" src="'+path+'abstract/Module.js"></script>'); 
 	document.write('<script type="text/javascript" src="js/abstract/Module.js"></script>'); 
-	document.write('<script type="text/javascript" src="'+path+'extjs/TaskBar.js"></script>'); 	 
-	document.write('<script type="text/javascript" src="'+path+'extjs/Desktop.js"></script>'); 
 	document.write('<script type="text/javascript" src="js/abstract/Desktop.js"></script>'); 
 	
 	document.write('<script type="text/javascript" src="'+path+'module.js"></script>'); 
 		
 	document.write('<script type="text/javascript" src="'+path+'extjs/App.js"></script>'); 	
-	document.write('<script type="text/javascript" src="js/abstract/TaskBar.js"></script>');		
 	document.write('<script type="text/javascript" src="js/module.js"></script>'); 
 	
 	document.write('<script type="text/javascript" src="App.js"></script>'); 
@@ -82,5 +69,4 @@
 	
 	document.write('<script type="text/javascript" src="js/customer.js"></script>'); 
 	document.write('<script type="text/javascript" src="js/main.js"></script>'); 
-
 })();
