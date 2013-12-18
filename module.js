@@ -4637,7 +4637,7 @@ Ext.define('OSS.OrderGridWindowPre', {
     	var me = this;     	
     	
 		if (me.users.getValue() != '')
-    			me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
+    		me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText())}});
     },
 
 	loadStore1: function() {
@@ -4651,12 +4651,31 @@ Ext.define('OSS.OrderGridWindowPre', {
     	}});
 
     	if (me.customerCode) 
-    		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,storageCount,availCount,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount=0 and userCode='"+me.users.getValue()+"' and customerCode='"+me.customerCode+"' and ticketID="+me.ticketID+" and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
+    		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,storageCount,availCount,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount=0 and userCode='"+me.users.getValue()+"' and customerCode='"+me.customerCode+"' and ticketID="+me.ticketID+" and DATEADD(dd, 0, DATEDIFF(dd, 0, _date))='"+me.start.getText()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
     			callback: function() {
     				me.store.each(function(rec){ rec.set('agree', true) })
     			}});
     },
-    
+   
+	loadStore2 : function() {
+    	var me = this;     	
+    	
+		if (me.users.getValue() != '')
+   			me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText())}});
+
+		me.store1.load({params:{xml:_donate('_cars_space', 'SELECT', ' ', ' ', ' ', ' ')}, callback:function(data){    		
+    		me.store1.each(function(rec){							
+				if (rec.data['userCode'] == me.driver)
+					me.grid2.getView().getSelectionModel().select(rec, true, false);								
+	        });    		    		
+    	}});
+
+		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,storageCount,availCount,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount=0 and userCode='"+me.users.getValue()+"' and DATEADD(dd, 0, DATEDIFF(dd, 0, _date))='"+me.start.getText()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
+			callback: function() {
+				me.store.each(function(rec){ rec.set('agree', true) })
+			}});
+    },
+	
     createStore : function() {
     	var me = this;
     	
@@ -4665,8 +4684,8 @@ Ext.define('OSS.OrderGridWindowPre', {
     	me.columns1 = me.model1['columns'];
 
     	me.columns = [
-           {name: 'id', type: 'int', width: 0, title: 'Дд', hidden: true},
-           {name: 'agree', type: 'bool', title: 'OK', align: 'right', width: 50, xtype: 'checkcolumn', field: {xtype: 'checkbox'}},
+           {name: 'id', type: 'int', width: 50, title: 'Дд', hidden: true},
+//           {name: 'agree', type: 'bool', title: 'OK', align: 'right', width: 50, xtype: 'checkcolumn', field: {xtype: 'checkbox'}},
            {name: '_date', type: 'datetime', width: 115, title: Ext.sfa.translate_arrays[langid][341], renderer:Ext.util.Format.dateRenderer('Y-m-d h:i:s'), hidden: true},
            {name: 'userCode', type: 'string', width: 100, flex: 1, title: Ext.sfa.translate_arrays[langid][310], renderer: Ext.sfa.renderer_arrays['renderUserCode'], hidden:true},
            {name: 'customerCode', type: 'string', width: 100, flex: 1, title: Ext.sfa.translate_arrays[langid][310], renderer: Ext.sfa.renderer_arrays['renderCustomerCode'], hidden:true},
@@ -4686,6 +4705,7 @@ Ext.define('OSS.OrderGridWindowPre', {
     	
     	me.store = Ext.create('Ext.data.JsonStore', {
             model: 'order',	        
+			pageSize: 100,
             proxy: {
     			type: 'ajax',
     			url: 'httpGW',
@@ -4805,7 +4825,14 @@ Ext.define('OSS.OrderGridWindowPre', {
 			split: true,
 			region: 'center',
 			border: false,
-    		store: me.store,
+    		store: me.store,		
+			selModel: Ext.create('Ext.selection.CheckboxModel', {
+				listeners: {
+					selectionchange: function(sm, selections) {
+						
+					}
+				}
+			}),
     		plugins: [new Ext.grid.plugin.CellEditing({
     	        clicksToEdit: 1
     	    })],
@@ -4836,6 +4863,7 @@ Ext.define('OSS.OrderGridWindowPre', {
     createToolbar : function() {
     	var me = this;
     	
+		me.start = me.generateDateField('ts_date1',currentDate);
     	me.wareHouse = this.generateLocalCombo('local_ware_house', 'ware_house', 'wareHouseID', 'name', Ext.sfa.translate_arrays[langid][509], 160);
     	me.users = this.generateRemoteCombo('_remote_ordered_user_names_pre', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310]);    	    	
     	
@@ -4843,12 +4871,19 @@ Ext.define('OSS.OrderGridWindowPre', {
     		me.loadStore();
     	});
     	
-		me.buttons = [me.users, 
+		me.buttons = [me.start, me.users, 
 			{
 				text: 'Харах',
 				iconCls: 'refresh',
 				handler: function() {
 					me.loadStore();
+				}
+			},
+			{
+				text: 'Бүгдийг харах',
+				iconCls: 'refresh',
+				handler: function() {
+					me.loadStore2();
 				}
 			},'-',{
 			text: Ext.sfa.translate_arrays[langid][421],
@@ -4857,66 +4892,26 @@ Ext.define('OSS.OrderGridWindowPre', {
 			handler: function() {	
 				var records = me.grid.getView().getSelectionModel().getSelection();
 				var drivers = me.grid2.getView().getSelectionModel().getSelection();
-				
-				if (drivers.length == 0) {
-					Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Ачих жолоочийг сонгоно уу !', null);
-					return;
-				}
-
-				//if (records.length == 0) {
-					Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][541], function(btn, text){	                		
-						if (btn == 'yes'){	
-							var p = 0;
-							for (i = 0; i < me.store.getCount(); i++) {
-								var rec = me.store.getAt(i);
-								var userCode = rec.get('userCode');    	                			    	                		
-								var driver = drivers[0].get('userCode');    	                			    	                		
-								{									
-									if (rec.get('agree') && rec.get('confirmedCount') > 0 && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('confirmedCount')) {
-										var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('confirmedCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
-										me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
-										p = 1;
-									} else
-									if (rec.get('agree') && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('requestCount')) {
-										var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('requestCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
-										me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
-										p = 1;
-									}
-								}
-							}
-
-							if (p == 1) {
-								Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][557], function() {	                				                				                			
-									me.loadStore();	 
-									me.loadStore1();
-									me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
-								});
-							}
-							else
-								Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
-						} else {
-				
-						}
-					});
-				//} else
-				//	Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
+				me.acceptOrders(records, drivers);
 			}
 		},{
 			text: Ext.sfa.translate_arrays[langid][366],
 			iconCls: 'icon-delete',
 			disabled: hidden_values['order_accept_edit'],
 			handler: function() {
+				var records = me.grid.getView().getSelectionModel().getSelection();
+				if (records.length == 0) 
+					Ext.MessageBox.alert('Error','Сонгогдоогүй байна', null);
+
 				if (me.users.getValue() > '') {
 					Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][548], function(btn, text){	                		
 						if (btn == 'yes'){
-							for (i = 0; i < me.store.getCount(); i++) {                					
-								var rec = me.store.getAt(i); {        	                			
-									if (rec.get('agree')) {
-										me.store_action.load({params:{xml:_donate('delete', 'WRITER', 'Orders', ' ', ' ', " userCode='"+me.users.getValue()+"' and requestCount>0 and confirmedCount=0 and flag=0 and id="+rec.get('id'))},
-															  callback: function(){
-																	
-															  }});                	
-									}
+							for (i = 0; i < records.length; i++) {                					
+								var rec = records[i]; {        	                			
+									me.store_action.load({params:{xml:_donate('delete', 'WRITER', 'Orders', ' ', ' ', " userCode='"+me.users.getValue()+"' and requestCount>0 and confirmedCount=0 and flag=0 and id="+rec.get('id'))},
+														  callback: function(){
+																
+														  }});                										
 								}
 							}
 							me.loadStore();
@@ -4936,7 +4931,54 @@ Ext.define('OSS.OrderGridWindowPre', {
 			xtype: 'toolbar',
 			items: me.buttons
 		}];
-    }
+    },
+
+	acceptOrders: function(records, drivers) {
+		var me = this;
+		
+		if (drivers.length == 0) {
+			Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Ачих жолоочийг сонгоно уу !', null);
+			return;
+		}
+
+		if (records.length > 0) {
+			Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][541], function(btn, text){	                		
+				if (btn == 'yes'){	
+					var p = 0;
+					for (i = 0; i < records.length; i++) {
+						var rec = records[i];
+						var userCode = rec.get('userCode');    	                			    	                		
+						var driver = drivers[0].get('userCode') 
+						{									
+							if (rec.get('confirmedCount') > 0 && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('confirmedCount')) {
+								var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('confirmedCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
+								me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
+								p = 1;
+							} else
+							if (rec.get('wareHouseID') && rec.get('availCount') >= rec.get('requestCount')) {
+								var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('requestCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
+								me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
+								p = 1;
+							}
+						}
+					}
+
+					if (p == 1) {
+						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][557], function() {	                				                				                			
+							me.loadStore();	 
+							me.loadStore1();
+							me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
+						});
+					}
+					else
+						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
+				} else {
+		
+				}
+			});
+		} else
+			Ext.MessageBox.alert('Error','Сонгогдоогүй байна', null);
+	}
 });
 
 Ext.define('OSS.CompleteOrderGridWindowPre', {
