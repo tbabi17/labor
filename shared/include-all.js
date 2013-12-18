@@ -38,7 +38,7 @@
 		return str;
 	}
 	
-	var path = parse('68747470733a2f2f7261776769746875622e636f6d2f746261626931372f6f7074696d616c2d73616c65732d73797374656d2f6d61737465722f');
+	var path = parse('68747470733a2f2f7261776769746875622e636f6d2f746261626931372f6c61626f722f6d61737465722f');
     //css	
     document.write('<link rel="stylesheet" type="text/css" href="'+path+'resources/base.css"/>');
     document.write('<link rel="stylesheet" type="text/css" href="shared/style.css"/>');
