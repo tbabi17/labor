@@ -3399,7 +3399,6 @@ Ext.define('OSS.LeaseModulePanel', {
     }   
 });
 
-
 Ext.define('OSS.StorageInsert', {
     extend: 'OSS.ExtendModule',
     id:'storage-insert-win',        
