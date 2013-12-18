@@ -3848,7 +3848,8 @@ Ext.define('OSS.UpdateSalesData', {
                 animCollapse:false,
                 constrainHeader:true,
                 layout: 'fit',
-                items: [this.createGrid()]
+                items: [this.createGrid()],
+	    		dockedItems: me.createToolbar()
             });
         }
         win.show();
@@ -3877,8 +3878,8 @@ Ext.define('OSS.UpdateSalesData', {
     		features: [me.summary],
     		plugins: me.model['rowEditor'],
     		columnLines: true,
-    		columns: me.createHeaders(me.model['columns']),			
-    		dockedItems: me.createToolbar()
+			border: false,
+    		columns: me.createHeaders(me.model['columns'])
     	});
     	
     	return me.grid;
@@ -3937,7 +3938,7 @@ Ext.define('OSS.UpdateSalesData', {
                 },
 				{
 					text: 'Буцаалт',
-					iconCls: 'back',
+					iconCls: 'icon-delete',
 					handler: function() {
 						
 					}
