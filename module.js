@@ -3399,6 +3399,7 @@ Ext.define('OSS.LeaseModulePanel', {
     }   
 });
 
+
 Ext.define('OSS.StorageInsert', {
     extend: 'OSS.ExtendModule',
     id:'storage-insert-win',        
@@ -3461,9 +3462,11 @@ Ext.define('OSS.StorageInsert', {
 		me.xml = _donate('_custom_price_list', 'SELECT', ' ', ' ', ' ', '1,battrade');
 		me.store.getProxy().extraParams = {xml:_donate('_custom_price_list', 'SELECT', ' ', ' ', ' ', '1,battrade')};
 		me.store.loadPage(1);
-    },           
+    },        
+    
 	_to: 1,
 	_from: 1,
+
     createGrid : function() {
     	var me = this;
     	me.createStore();
