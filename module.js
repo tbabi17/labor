@@ -3406,7 +3406,6 @@ Ext.define('OSS.StorageInsert', {
     init : function(){  	
     	this.title = Ext.sfa.translate_arrays[langid][512];        
 		//bat
-		alert(1);
     },
 
     createWindow : function(){
@@ -4657,19 +4656,7 @@ Ext.define('OSS.OrderGridWindowPre', {
     				me.store.each(function(rec){ rec.set('agree', true) })
     			}});
     },
-   
-	loadStore2 : function() {
-    	var me = this;     	
-    	
-		if (me.users.getValue() != '')
-   			me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
-
-		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,storageCount,availCount,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount=0 and userCode='"+me.users.getValue()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
-			callback: function() {
-				me.store.each(function(rec){ rec.set('agree', true) })
-			}});
-    },
-	
+    
     createStore : function() {
     	var me = this;
     	
@@ -4863,13 +4850,6 @@ Ext.define('OSS.OrderGridWindowPre', {
 				handler: function() {
 					me.loadStore();
 				}
-			},
-			{
-				text: 'Бүгдийг харах',
-				iconCls: 'refresh',
-				handler: function() {
-					me.loadStore2();
-				}
 			},'-',{
 			text: Ext.sfa.translate_arrays[langid][421],
 			iconCls: 'icon-apply',
@@ -4877,7 +4857,49 @@ Ext.define('OSS.OrderGridWindowPre', {
 			handler: function() {	
 				var records = me.grid.getView().getSelectionModel().getSelection();
 				var drivers = me.grid2.getView().getSelectionModel().getSelection();
-				me.acceptOrders(records, drivers);
+				
+				if (drivers.length == 0) {
+					Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Ачих жолоочийг сонгоно уу !', null);
+					return;
+				}
+
+				//if (records.length == 0) {
+					Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][541], function(btn, text){	                		
+						if (btn == 'yes'){	
+							var p = 0;
+							for (i = 0; i < me.store.getCount(); i++) {
+								var rec = me.store.getAt(i);
+								var userCode = rec.get('userCode');    	                			    	                		
+								var driver = drivers[0].get('userCode');    	                			    	                		
+								{									
+									if (rec.get('agree') && rec.get('confirmedCount') > 0 && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('confirmedCount')) {
+										var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('confirmedCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
+										me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
+										p = 1;
+									} else
+									if (rec.get('agree') && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('requestCount')) {
+										var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('requestCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
+										me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
+										p = 1;
+									}
+								}
+							}
+
+							if (p == 1) {
+								Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][557], function() {	                				                				                			
+									me.loadStore();	 
+									me.loadStore1();
+									me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
+								});
+							}
+							else
+								Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
+						} else {
+				
+						}
+					});
+				//} else
+				//	Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
 			}
 		},{
 			text: Ext.sfa.translate_arrays[langid][366],
@@ -4914,56 +4936,8 @@ Ext.define('OSS.OrderGridWindowPre', {
 			xtype: 'toolbar',
 			items: me.buttons
 		}];
-    },
-
-	acceptOrders: function(records, drivers) {
-		var me = this;
-		
-		if (drivers.length == 0) {
-			Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Ачих жолоочийг сонгоно уу !', null);
-			return;
-		}
-
-		//if (records.length == 0) {
-			Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][541], function(btn, text){	                		
-				if (btn == 'yes'){	
-					var p = 0;
-					for (i = 0; i < me.store.getCount(); i++) {
-						var rec = me.store.getAt(i);
-						var userCode = rec.get('userCode');    	                			    	                		
-						var driver = drivers[0].get('userCode');
-						{									
-							if (rec.get('agree') && rec.get('confirmedCount') > 0 && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('confirmedCount')) {
-								var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('confirmedCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
-								me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
-								p = 1;
-							} else
-							if (rec.get('agree') && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('requestCount')) {
-								var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('requestCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
-								me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
-								p = 1;
-							}
-						}
-					}
-
-					if (p == 1) {
-						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][557], function() {	                				                				                			
-							me.loadStore();	 
-							me.loadStore1();
-							me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
-						});
-					}
-					else
-						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
-				} else {
-		
-				}
-			});
-		//} else
-		//	Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][547], null);
-	}
+    }
 });
-
 
 Ext.define('OSS.CompleteOrderGridWindowPre', {
     extend: 'OSS.ExtendModule',
