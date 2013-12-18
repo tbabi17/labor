@@ -172,7 +172,7 @@ Ext.define('OSS.Module', {
     },
     
     createHeaders: function(columns) {	
-    	var headers = [new Ext.grid.RowNumberer({width:30})];
+    	var headers = [new Ext.grid.RowNumberer({width:40})];
     	var count = 1;
     	for (i = 0; i < columns.length; i++) {
     		if (columns[i].columns) {
@@ -759,7 +759,7 @@ Ext.define('OSS.EngineModule', {
     		    },me.filters];
     		} else
     		if (Ext.sfa.params[name].charAt(3) == 'S') {    			
-    			this.columns = [new Ext.grid.RowNumberer({width:30}), this.model['columns']];    			
+    			this.columns = [new Ext.grid.RowNumberer({width:40}), this.model['columns']];    			
     			this.feature = [{
     				id: modelName+'_summary',
     				ftype: 'summary'					       
@@ -778,7 +778,7 @@ Ext.define('OSS.EngineModule', {
 				
     		} else
     		if (Ext.sfa.params[name].charAt(3) == 'G') {
-    			this.columns = [new Ext.grid.RowNumberer({width:30}), this.model['columns']];    			
+    			this.columns = [new Ext.grid.RowNumberer({width:40}), this.model['columns']];    			
 				this.grouping = Ext.create('Ext.grid.feature.GroupingSummary', {    					
         				id: name+'_group',
          				ftype: 'groupingsummary',
@@ -788,7 +788,7 @@ Ext.define('OSS.EngineModule', {
     			this.feature = [this.grouping,me.filters];    			
     		} else
     		if (Ext.sfa.params[name].charAt(3) == 'P') {
-    			this.columns = [new Ext.grid.RowNumberer({width:30}), this.model['columns']];
+    			this.columns = [new Ext.grid.RowNumberer({width:40}), this.model['columns']];
     			this.feature = [{
      				id: name+'_group',
      				ftype: 'groupingsummary',
@@ -797,7 +797,7 @@ Ext.define('OSS.EngineModule', {
     			}];
     		} else {					    			
     			this.feature = [];
-    			this.columns = [new Ext.grid.RowNumberer({width:30}), this.model['columns']];
+    			this.columns = [new Ext.grid.RowNumberer({width:40}), this.model['columns']];
     		}
     	}
     	else {
