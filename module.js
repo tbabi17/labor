@@ -4902,7 +4902,6 @@ Ext.define('OSS.OrderGridWindowPre', {
 				var records = me.grid.getView().getSelectionModel().getSelection();
 				if (records.length == 0) 
 					Ext.MessageBox.alert('Error','Сонгогдоогүй байна', null);
-
 				if (me.users.getValue() > '') {
 					Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][548], function(btn, text){	                		
 						if (btn == 'yes'){
