@@ -3405,6 +3405,7 @@ Ext.define('OSS.StorageInsert', {
     
     init : function(){  	
     	this.title = Ext.sfa.translate_arrays[langid][512];        
+		//bat
     },
 
     createWindow : function(){
