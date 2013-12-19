@@ -42,7 +42,8 @@ Ext.define('Ext.ux.desktop.App', {
 		'OSS.OrdersReport',
 		'OSS.CustomPriceWindow',
 		'OSS.ReportVersion_1',
-		'OSS.OrderImportManual'
+		'OSS.OrderImportManual',
+		'OSS.BackOrderGridWindowPre',
     ],
 
 	isReady:false,
@@ -128,7 +129,8 @@ Ext.define('Ext.ux.desktop.App', {
 			new OSS.OrdersReport(),
 			new OSS.CustomPriceWindow(),
 			new OSS.ReportVersion_1(),
-			new OSS.OrderImportManual()
+			new OSS.OrderImportManual(),
+			new OSS.BackOrderGridWindowPre()
         ];
     },
 
