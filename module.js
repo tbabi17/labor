@@ -8814,7 +8814,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
     id:'back-order-grid-win-pre',        
     
     init : function(){  	
-    	this.title = 'Борлуулалтын буцаалт';        
+    	this.title = 'Борлуулалтын буцаалт1';        
     },
 
     createWindow : function(){
@@ -9047,8 +9047,8 @@ Ext.define('OSS.BackOrderGridWindowPre', {
     		border: false,
 			height: 200,
 			split: true,
-    		columnLines: true,    		
-    		store: me.store1,    				
+    		columnLines: true,
+    		store: me.store1,
     		columns: [new Ext.grid.RowNumberer({width:30}), {
                 text     : 'Бараа',
                 flex	 : 1,
@@ -9057,7 +9057,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
             },{
                 text     : 'Буцаах тоо',
 				width	 : 100,
-                sortable : true,                
+                sortable : true,
                 dataIndex: 'quantity',
 				align    : 'right',
                 renderer : Ext.sfa.renderer_arrays['renderNumber']
