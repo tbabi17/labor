@@ -8814,7 +8814,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
     id:'back-order-grid-win-pre',        
     
     init : function(){  	
-    	this.title = Ext.sfa.translate_arrays[langid][278];        
+    	this.title = 'Борлуулалтын буцаалт';        
     },
 
     createWindow : function(){
