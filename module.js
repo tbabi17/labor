@@ -8857,13 +8857,6 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 	loadStore1: function() {
     	var me = this;     	
     	
-		me.store1.load({params:{xml:_donate('_cars_space', 'SELECT', ' ', ' ', ' ', ' ')}, callback:function(data){    		
-    		me.store1.each(function(rec){							
-				if (rec.data['userCode'] == me.driver)
-					me.grid2.getView().getSelectionModel().select(rec, true, false);								
-	        });    		    		
-    	}});
-
     	if (me.customerCode) 
     		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount@0 and userCode='"+me.users.getValue()+"' and customerCode='"+me.customerCode+"' and ticketID="+me.ticketID+" and DATEADD(dd, 0, DATEDIFF(dd, 0, _date))='"+me.start.getText()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
     			callback: function() {
