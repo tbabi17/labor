@@ -8877,16 +8877,9 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 		if (me.users.getValue() != '')
    			me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText())}});
 
-		me.store1.load({params:{xml:_donate('_cars_space', 'SELECT', ' ', ' ', ' ', ' ')}, callback:function(data){    		
-    		me.store1.each(function(rec){							
-				if (rec.data['userCode'] == me.driver)
-					me.grid2.getView().getSelectionModel().select(rec, true, false);								
-	        });    		    		
-    	}});
-
 		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount@0 and userCode='"+me.users.getValue()+"' and DATEADD(dd, 0, DATEDIFF(dd, 0, _date))='"+me.start.getText()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
 			callback: function() {
-				me.store.each(function(rec){ rec.set('agree', true) })
+
 			}});
     },
 	
@@ -9062,14 +9055,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 			height: 200,
 			split: true,
     		columnLines: true,    		
-    		store: me.store,    		
-			selModel: Ext.create('Ext.selection.CheckboxModel', {
-				listeners: {
-					selectionchange: function(sm, selections) {
-						
-					}
-				}
-			}),	
+    		store: me.store1,    				
     		columns: [new Ext.grid.RowNumberer({width:30}), {
                 text     : 'Бараа',
                 flex	 : 1,
