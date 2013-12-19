@@ -9091,11 +9091,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
     	
 		me.start = me.generateDateField('ts_date1',currentDate);
     	me.wareHouse = this.generateLocalCombo('local_ware_house', 'ware_house', 'wareHouseID', 'name', Ext.sfa.translate_arrays[langid][509], 160);
-    	me.users = this.generateRemoteCombo('_remote_ordered_user_names_pre', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310]);    	    	
-    	
-    	me.users.on('change', function(e) {
-    		me.loadStore();
-    	});
+    	me.users = this.generateRemoteCombo('_remote_ordered_user_names_pre', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310]);    	    	    
     	
 		me.buttons = [me.start, me.users, {
 				text: 'Харах',
