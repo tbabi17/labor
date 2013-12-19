@@ -3839,6 +3839,7 @@ Ext.define('OSS.UpdateSalesData', {
     	var desktop = this.app.getDesktop();
         var win = desktop.getWindow('update-sales-data-win');        
         if(!win){        	        	
+			var me = this;
             win = desktop.createWindow({
                 id: 'update-sales-data-win',
                 title:this.title,
