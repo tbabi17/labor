@@ -8884,7 +8884,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 	        });    		    		
     	}});
 
-		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,storageCount,availCount,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount=0 and userCode='"+me.users.getValue()+"' and DATEADD(dd, 0, DATEDIFF(dd, 0, _date))='"+me.start.getText()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
+		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,i,i,f,f,i', " WHERE requestCount@0 and confirmedCount@0 and userCode='"+me.users.getValue()+"' and DATEADD(dd, 0, DATEDIFF(dd, 0, _date))='"+me.start.getText()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
 			callback: function() {
 				me.store.each(function(rec){ rec.set('agree', true) })
 			}});
@@ -9062,7 +9062,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 			height: 200,
 			split: true,
     		columnLines: true,    		
-    		store: me.store1,    		
+    		store: me.store,    		
 			selModel: Ext.create('Ext.selection.CheckboxModel', {
 				listeners: {
 					selectionchange: function(sm, selections) {
