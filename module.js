@@ -8967,19 +8967,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
     		split: true,
     		region: 'west',
     		features: [me.summary1],
-    		store: me.cstore,    	
-			viewConfig: {
-                plugins: {
-                    ptype: 'gridviewdragdrop',
-                    dragGroup: me.group1,
-                    dropGroup: me.group2
-                },
-                listeners: {
-                    drop: function(node, data, dropRec, dropPosition) {                    	
-                    	              	
-                    }
-                }
-            },
+    		store: me.cstore,    				
     		columns: [new Ext.grid.RowNumberer({width:30}), {
                 text     : 'Огноо',
                 width	 : 100,
@@ -9073,6 +9061,18 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 			split: true,
     		columnLines: true,
     		store: me.store1,
+			viewConfig: {
+                plugins: {
+                    ptype: 'gridviewdragdrop',
+                    dragGroup: me.group1,
+                    dropGroup: me.group2
+                },
+                listeners: {
+                    drop: function(node, data, dropRec, dropPosition) {                    	
+                    	              	
+                    }
+                }
+            },
     		columns: [new Ext.grid.RowNumberer({width:30}), {
                 text     : 'Бараа',
                 flex	 : 1,
