@@ -8814,7 +8814,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
     id:'back-order-grid-win-pre',        
     
     init : function(){  	
-    	this.title = 'Борлуулалтын буцаалт1';        
+    	this.title = 'Борлуулалтын буцаалт';        
     },
 
     createWindow : function(){
@@ -9040,8 +9040,8 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 			viewConfig: {
                 plugins: {
                     ptype: 'gridviewdragdrop',
-                    dragGroup: me.group2,
-                    dropGroup: me.group1
+                    dragGroup: me.group1,
+                    dropGroup: me.group2
                 },
                 listeners: {
                     drop: function(node, data, dropRec, dropPosition) {                    	
