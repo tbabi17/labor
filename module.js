@@ -8936,17 +8936,6 @@ Ext.define('OSS.BackOrderGridWindowPre', {
                 }
     		}
         });								
-    	
-    	me.store_action = Ext.create('Ext.data.JsonStore', {
-            model: 'order',	        
-            proxy: {
-    			type: 'ajax',
-    			url: 'httpGW',
-    			writer: {
-    	           type: 'json'
-    	        }
-    		}
-        });
     },        
     
     createGrid : function() {
@@ -9117,6 +9106,13 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 				handler: function() {	
 					var records = me.grid2.getView().getSelectionModel().getSelection();
 					me.acceptOrders(records);
+				}
+			},
+			{
+				text: 'Цэвэрлэх',
+				iconCls: 'icon-delete',
+				handler: function() {
+					me.store1.loadData([],false);
 				}
 			}
 		];	
