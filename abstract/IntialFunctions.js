@@ -873,7 +873,7 @@ generateFunction = function (tableName, modelName, funName, extend, fields, type
 						Ext.sfa.renderer_arrays[funName] = function(v) {
 							if (!dc.names_value_array[v+'']) 
 								return v;
-							if 
+
 							if (v.length >= 3)							
 								return '<b>'+v+'</b>-'+dc.names_value_array[v+''];
 							else
