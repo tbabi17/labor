@@ -9068,7 +9068,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 								fieldLabel: 'Буцаах тоо',
 								name: 'quantity',
 								minValue: 0,
-								maxValue: 900000,
+								maxValue: rec.data['confirmedCount'],
 								value: rec.data['quantity'],
 								align: 'right',
 								allowBlank: false,
@@ -9090,10 +9090,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 								items: [quantity],
 								buttons: [{
 										text: 'OK',
-										handler: function() {			
-											me._to = wareTo.getValue();
-											me._from = wareFrom.getValue();
-											
+										handler: function() {														
 											rec.set('quantity', quantity.getValue());
 											rec.set('driver', rec.data['driver']);
 																																						
@@ -9115,7 +9112,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 								bodyPadding: 0,
 								layout: 'fit',
 								width: 320,
-								height: 240,
+								height: 140,
 								items: [storage_row]
 							});
 							
