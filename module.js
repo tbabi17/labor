@@ -8901,7 +8901,8 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 		me.store1 = Ext.create('Ext.data.JsonStore', {
             fields: [
                 {name: 'productCode'},
-                {name: 'quantity'}
+                {name: 'quantity'},
+                {name: 'driver'}
             ]
         });
 
@@ -9085,6 +9086,12 @@ Ext.define('OSS.BackOrderGridWindowPre', {
                 dataIndex: 'quantity',
 				align    : 'right',
                 renderer : Ext.sfa.renderer_arrays['renderNumber']
+            },{
+                text     : 'Жолооч',
+				width	 : 100,
+                sortable : true,
+                dataIndex: 'driver',				
+                renderer : Ext.sfa.renderer_arrays['renderUserCode']
             }]              
     	});
     },
@@ -9104,49 +9111,15 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 				}
 			},
 			{
-				text: 'Бүгдийг харах',
-				iconCls: 'refresh',
-				handler: function() {
-					me.loadStore2();
+				text: Ext.sfa.translate_arrays[langid][421],
+				iconCls: 'icon-apply',
+				disabled: hidden_values['order_accept_edit'],
+				handler: function() {	
+					var records = me.grid2.getView().getSelectionModel().getSelection();
+					me.acceptOrders(records);
 				}
-			},'-',{
-			text: Ext.sfa.translate_arrays[langid][421],
-			iconCls: 'icon-apply',
-			disabled: hidden_values['order_accept_edit'],
-			handler: function() {	
-				var records = me.grid.getView().getSelectionModel().getSelection();
-				var drivers = me.grid2.getView().getSelectionModel().getSelection();
-				me.acceptOrders(records, drivers);
 			}
-		},{
-			text: Ext.sfa.translate_arrays[langid][366],
-			iconCls: 'icon-delete',
-			disabled: hidden_values['order_accept_edit'],
-			handler: function() {
-				var records = me.grid.getView().getSelectionModel().getSelection();
-				if (records.length == 0) 
-					Ext.MessageBox.alert('Error','Сонгогдоогүй байна', null);
-				if (me.users.getValue() > '') {
-					Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][548], function(btn, text){	                		
-						if (btn == 'yes'){
-							for (i = 0; i < records.length; i++) {                					
-								var rec = records[i]; {        	                			
-									me.store_action.load({params:{xml:_donate('delete', 'WRITER', 'Orders', ' ', ' ', " userCode='"+me.users.getValue()+"' and requestCount>0 and confirmedCount=0 and flag=0 and id="+rec.get('id'))},
-														  callback: function(){
-																
-														  }});                										
-								}
-							}
-							me.loadStore();
-							
-						} else {
-				
-						}
-					});	                		
-				} else 
-					Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][539], null);	                	
-			}
-		}];
+		];	
 
 		me.addStandardButtons();
 		
@@ -9156,41 +9129,34 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 		}];
     },
 
-	acceptOrders: function(records, drivers) {
-		var me = this;
-		
-		if (drivers.length == 0) {
-			Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Ачих жолоочийг сонгоно уу !', null);
-			return;
-		}
+	acceptOrders: function(records) {
+		var me = this;		
 
 		if (records.length > 0) {
 			Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][541], function(btn, text){	                		
 				if (btn == 'yes'){	
 					var p = 0;
-					for (i = 0; i < records.length; i++) {
-						var rec = records[i];
-						var userCode = rec.get('userCode');    	                			    	                		
-						var driver = drivers[0].get('userCode') 
-						{									
-							if (rec.get('confirmedCount') > 0 && rec.get('wareHouseID') && rec.get('availCount') >= rec.get('confirmedCount')) {
-								var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('confirmedCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
-								me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
-								p = 1;
-							} else
-							if (rec.get('wareHouseID') && rec.get('availCount') >= rec.get('requestCount')) {
-								var v = 's'+userCode+',s'+rec.get('customerCode')+',s'+rec.get('productCode')+',i'+rec.get('requestCount')+',i'+rec.get('wareHouseID')+',f'+rec.get('price')+',s'+driver;
-								me.store_action.load({params:{xml:_donate('update', 'WRITER', 'Orders', 'userCode,customerCode,productCode,confirmedCount,wareHouseID,price,driver', v, ' id='+rec.get('id'))}});
-								p = 1;
-							}
+					var action_order_temp = Ext.create('Ext.data.JsonStore', {                 	                         	        
+						proxy: {
+							type: 'ajax',
+							url: 'httpGW',
+							writer: {
+								type: 'json'                 	                
+							}	            
 						}
+					});	
+					for (i = 0; i < records.length; i++) {
+						var rec = records[i];								            		
+						var values = me.customerCode+','+me.ticketID+','+me.users.getValue()+','+rec.data['productCode']+','+rec.data['quantity']+','+rec.data['driver'];
+						alert(values);
+//           				action_order_temp.load({params:{xml:_donate('action_sale_back_storage', 'SELECT', '', '', values)}});
 					}
 
 					if (p == 1) {
 						Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], Ext.sfa.translate_arrays[langid][557], function() {	                				                				                			
 							me.loadStore();	 
 							me.loadStore1();
-							me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
+							me.cstore.load({params:{xml:_donate('_completed_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue())}});
 						});
 					}
 					else
