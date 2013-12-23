@@ -9069,7 +9069,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 								name: 'quantity',
 								minValue: 0,
 								maxValue: rec.data['confirmedCount'],
-								value: rec.data['quantity'],
+								value: rec.data['confirmedCount'],
 								align: 'right',
 								allowBlank: false,
 								allowDecimals: true,
