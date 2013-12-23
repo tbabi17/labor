@@ -8916,7 +8916,8 @@ Ext.define('OSS.BackOrderGridWindowPre', {
            {name: 'confirmedCount', type: 'int', title: Ext.sfa.translate_arrays[langid][421], align: 'right', width: 70, field: {xtype: 'numberfield'}, summaryType: 'sum'},
            {name: 'price', type: 'int', title: Ext.sfa.translate_arrays[langid][414], align: 'right', width: 70, field: {xtype: 'numberfield'}, renderer: Ext.sfa.renderer_arrays['renderMoney']},
            {name: 'orderAmount', type: 'int', title: Ext.sfa.translate_arrays[langid][455], align: 'right', width: 100, field: {xtype: 'numberfield'}, renderer: Ext.sfa.renderer_arrays['renderMoney'], summaryType: 'sum', summaryRenderer: Ext.sfa.renderer_arrays['renderTMoney']},
-           {name: 'wareHouseID', type: 'int', title: Ext.sfa.translate_arrays[langid][375], width: 85, renderer: Ext.sfa.renderer_arrays['renderWareHouseID']}                                 
+           {name: 'wareHouseID', type: 'int', title: Ext.sfa.translate_arrays[langid][375], width: 85, renderer: Ext.sfa.renderer_arrays['renderWareHouseID']},                                 
+           {name: 'driver', type: 'string', title: '', width: 0, hidden: true}                                 
         ];
     	
     	Ext.regModel('order', {	        
@@ -9202,7 +9203,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 					});	
 					for (i = 0; i < records.length; i++) {
 						var rec = records[i];								            		
-						var values = me.customerCode+','+me.ticketID+','+me.users.getValue()+','+rec.data['productCode']+','+rec.data['quantity']+','+rec.data['driver'];
+						var values = me.customerCode+','+me.ticketID+','+me.users.getValue()+','+rec.data['productCode']+','+rec.data['quantity']+','+rec.data['driver']+','+rec.data['price'];
 						alert(values);
 //           				action_order_temp.load({params:{xml:_donate('action_sale_back_storage', 'SELECT', '', '', values)}});
 					}
