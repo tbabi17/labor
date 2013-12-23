@@ -8851,7 +8851,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
     	var me = this;     	
     	
 		if (me.users.getValue() != '')
-    		me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText())}});
+    		me.cstore.load({params:{xml:_donate('_completed_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText())}});
     },
 
 	loadStore1: function() {
