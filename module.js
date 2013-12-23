@@ -9124,7 +9124,8 @@ Ext.define('OSS.BackOrderGridWindowPre', {
     		columns: [new Ext.grid.RowNumberer({width:30}), {
                 text     : 'Бараа',
                 flex	 : 1,
-                sortable : true,                            
+                sortable : true,          
+				renderer : Ext.sfa.renderer_arrays['renderProductCode'],
                 dataIndex: 'productCode'                
             },{
                 text     : 'Буцаах тоо',
