@@ -8868,7 +8868,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
     	var me = this;     	
     	
 		if (me.users.getValue() != '')
-   			me.cstore.load({params:{xml:_donate('_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText())}});
+   			me.cstore.load({params:{xml:_donate('_completed_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText())}});
 
 		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID', 'i,s,s,s,f,f,i', " WHERE requestCount@0 and confirmedCount@0 and userCode='"+me.users.getValue()+"' and DATEADD(dd, 0, DATEDIFF(dd, 0, _date))='"+me.start.getText()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
 			callback: function() {
