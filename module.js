@@ -9059,7 +9059,68 @@ Ext.define('OSS.BackOrderGridWindowPre', {
                 },
                 listeners: {
                     drop: function(node, data, dropRec, dropPosition) {                    	
-                    	              	
+                    	var rec = data.records[0];				   
+						if (1==1) {
+							var productCode = rec.data['productCode'];										
+												
+							var quantity = Ext.create('Ext.form.NumberField', {
+								xtype: 'numberfield',
+								fieldLabel: 'Буцаах тоо',
+								name: 'quantity',
+								minValue: 0,
+								maxValue: 900000,
+								value: rec.data['quantity'],
+								align: 'right',
+								allowBlank: false,
+								allowDecimals: true,
+								decimalPrecision: 2
+							});																		
+													
+							var storage_row = Ext.createWidget('form', {			        			        
+								bodyPadding: 5,
+								width: 320,
+								height: 240,
+								border: false,		        
+								fieldDefaults: {
+									labelAlign: 'left',
+									labelWidth: 130,
+									fieldWidth: 80,
+									allowBlank: false    				            
+								},
+								items: [quantity],
+								buttons: [{
+										text: 'OK',
+										handler: function() {			
+											me._to = wareTo.getValue();
+											me._from = wareFrom.getValue();
+											
+											rec.set('quantity', quantity.getValue());
+											rec.set('driver', rec.data['driver']);
+																																						
+											win_row.hide();
+										}
+									},
+									{
+										text: Ext.sfa.translate_arrays[langid][327],
+										handler: function() {
+											win_row.hide();
+										}
+									}
+								]
+							});
+											
+							
+							var win_row = Ext.widget('window', {
+								title: Ext.sfa.renderer_arrays['renderProductCode'](productCode),			
+								bodyPadding: 0,
+								layout: 'fit',
+								width: 320,
+								height: 240,
+								items: [storage_row]
+							});
+							
+							win_row.show();
+						}              	
                     }
                 }
             },
