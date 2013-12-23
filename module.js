@@ -3275,7 +3275,6 @@ Ext.define('OSS.ManualModulePanel', {
             data: [
                    ['order-import-manual', 'module', Ext.sfa.translate_arrays[langid][293], 'id', 700, 450, 'hand-order-module'],                   
                    ['Hand_sale', 'Product_count', Ext.sfa.translate_arrays[langid][294], 'id', 700, 500, 'hand-sale-module'],
-                   ['back-order-grid-win-pre', 'module', Ext.sfa.translate_arrays[langid][295], 'id', 800, 450, 'update-sale-module']
 //                   ['update-orders-data-win', 'module', Ext.sfa.translate_arrays[langid][618], 'id', 800, 450, 'update-sale-module']
             ]
         });
@@ -3326,7 +3325,8 @@ Ext.define('OSS.StorageModulePanel', {
                    ['complete-order-grid-win', 'module', Ext.sfa.translate_arrays[langid][511], '', 0, 0, 'storage-out-module'],                   
                    ['storage-insert-win', 'module', Ext.sfa.translate_arrays[langid][512], 'id', 500, 450, 'storage-in-module'],
                    ['orders-report-win', 'module', Ext.sfa.translate_arrays[langid][639], 'id', 700, 450, 'storage-report-module'],
-                   ['Storage_Out_Report', '_storage_out_q', Ext.sfa.translate_arrays[langid][655], 'id', 850, 550, 'storage-out-product']
+                   ['Storage_Out_Report', '_storage_out_q', Ext.sfa.translate_arrays[langid][655], 'id', 850, 550, 'storage-out-product'],
+                   ['back-order-grid-win-pre', 'module', Ext.sfa.translate_arrays[langid][295], 'id', 800, 450, 'update-sale-module']
             ]
         });
     }   
