@@ -8856,7 +8856,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 
 	loadStore1: function() {
     	var me = this;     	
-    	
+    	me.store1.loadData([],false);
     	if (me.customerCode) 
     		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID,driver', 'i,s,s,s,f,f,i,s', " WHERE requestCount@0 and confirmedCount@0 and userCode='"+me.users.getValue()+"' and customerCode='"+me.customerCode+"' and ticketID="+me.ticketID+" and DATEADD(dd, 0, DATEDIFF(dd, 0, _date))='"+me.start.getText()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
     			callback: function() {
