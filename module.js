@@ -9175,6 +9175,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 				text: 'Цэвэрлэх',
 				iconCls: 'icon-delete',
 				handler: function() {
+					me.loadStore();
 					me.store1.loadData([],false);
 				}
 			}
