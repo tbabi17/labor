@@ -9198,7 +9198,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 		if (records.length > 0) {
 			Ext.Msg.confirm(Ext.sfa.translate_arrays[langid][540], Ext.sfa.translate_arrays[langid][541], function(btn, text){	                		
 				if (btn == 'yes'){	
-					var p = 0;
+					var p = 1;
 					var action_order_temp = Ext.create('Ext.data.JsonStore', {                 	                         	        
 						proxy: {
 							type: 'ajax',
@@ -9212,6 +9212,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 						var rec = records[i];								            		
 						var values = me.customerCode+','+me.ticketID+','+me.users.getValue()+','+rec.data['productCode']+','+rec.data['quantity']+','+rec.data['driver']+','+rec.data['price'];
            				action_order_temp.load({params:{xml:_donate('action_sale_back_storage', 'SELECT', '', '', values)}});
+						p = 0;
 					}
 
 					if (p == 1) {
