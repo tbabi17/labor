@@ -9091,9 +9091,12 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 								items: [quantity],
 								buttons: [{
 										text: 'OK',
-										handler: function() {														
-											rec.set('quantity', quantity.getValue());
-											rec.set('driver', rec.data['driver']);
+										handler: function() {		
+											if (rec.data['confirmedCount'] > quantity.getValue()) {											
+												rec.set('quantity', quantity.getValue());
+												rec.set('driver', rec.data['driver']);
+											} else
+												Ext.MessageBox.alert('Error','Хэтэрсэн байна !', null);
 																																						
 											win_row.hide();
 										}
