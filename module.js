@@ -9200,7 +9200,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 					});	
 					for (i = 0; i < records.length; i++) {
 						var rec = records[i];								            		
-						var values = me.customerCode+','+me.ticketID+','+me.users.getValue()+','+rec.data['productCode']+','+me.start.getText()+','+rec.data['quantity']+','+rec.data['driver']+','+rec.data['price']+','+rec.data['id'];
+						var values = me.customerCode+','+me.ticketID+','+me.users.getValue()+','+rec.data['productCode']+','+me.start.getText()+','+rec.data['quantity']+','+rec.data['driver']+','+rec.data['price']+','+rec.data['id']+','+rec.data['wareHouseID'];
            				action_order_temp.load({params:{xml:_donate('action_sale_back_storage', 'WRITER', ' ', ' ', ' ', values)}});
 						p = 1;
 					}
