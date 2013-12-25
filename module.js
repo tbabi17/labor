@@ -8858,23 +8858,12 @@ Ext.define('OSS.BackOrderGridWindowPre', {
     	var me = this;     	
     	me.store1.loadData([],false);
     	if (me.customerCode) 
-    		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID,driver', 'i,s,s,s,f,f,i,s', " WHERE requestCount@0 and confirmedCount@0 and userCode='"+me.users.getValue()+"' and customerCode='"+me.customerCode+"' and ticketID="+me.ticketID+" and DATEADD(dd, 0, DATEDIFF(dd, 0, _date))='"+me.start.getText()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
-    			callback: function() {
-    				
-    			}});
-    },
-   
-	loadStore2 : function() {
-    	var me = this;     	
-    	
-		if (me.users.getValue() != '')
-   			me.cstore.load({params:{xml:_donate('_completed_order_customer_list', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText())}});
-
-		me.store.load({params:{xml:_donate('Orders', 'SELECT', 'Orders as b JOIN Product on productCode=code', 'id,_date,userCode,customerCode,productCode,requestCount,confirmedCount,price,orderAmount,b.wareHouseID as wareHouseID,driver', 'i,s,s,s,f,f,i,s', " WHERE requestCount@0 and confirmedCount@0 and userCode='"+me.users.getValue()+"' and DATEADD(dd, 0, DATEDIFF(dd, 0, _date))='"+me.start.getText()+"' and flag=0 ORDER by class asc,_date desc,confirmedCount asc")},
-			callback: function() {
-
-			}});
-    },
+			me.store.load({params:{xml:_donate('_back_after_completed_order_list', 'SELECT', ' ', ' ', ' ', me.users.getValue()+','+me.start.getText()+','+me.ticketID+','+me.customerCode)},
+				callback: function() {
+	
+				}
+			});    		
+    },  
 	
     createStore : function() {
     	var me = this;    
