@@ -1495,8 +1495,8 @@ initStaticModels = function() {
 	{
 		title: 'Даваа',
 		columns : [
-			{name: 'monIr', title: 'Ирсэн', width:50},
-			{name: 'monYv', title: 'Явсан', width:50}
+			{dataIndex: 'monIr', header: 'Ирсэн', width:50},
+			{dataIndex: 'monYv', header: 'Явсан', width:50}
 		]
 	};
 	
@@ -1504,8 +1504,8 @@ initStaticModels = function() {
 	{
 		title: 'Мягмар',
 		columns : [
-			{name: 'thueIr', title: 'Ирсэн', width:50},
-			{name: 'thueYv', title: 'Явсан', width:50}
+			{dataIndex: 'thueIr', header: 'Ирсэн', width:50},
+			{dataIndex: 'thueYv', header: 'Явсан', width:50}
 		]
 	};
 
@@ -1513,8 +1513,8 @@ initStaticModels = function() {
 	{
 		title: 'Лхагва',
 		columns : [
-			{name: 'wedIr', title: 'Ирсэн', width:50},
-			{name: 'wedYv', title: 'Явсан', width:50}
+			{dataIndex: 'wedIr', header: 'Ирсэн', width:50},
+			{dataIndex: 'wedYv', header: 'Явсан', width:50}
 		]
 	};
 
@@ -1522,8 +1522,8 @@ initStaticModels = function() {
 	{
 		title: 'Пүрэв',
 		columns : [
-			{name: 'thurIr', title: 'Ирсэн', width:50},
-			{name: 'thurYv', title: 'Явсан', width:50}
+			{dataIndex: 'thurIr', header: 'Ирсэн', width:50},
+			{dataIndex: 'thurYv', header: 'Явсан', width:50}
 		]
 	};
 
@@ -1531,8 +1531,8 @@ initStaticModels = function() {
 	{
 		title: 'Баасан',
 		columns : [
-			{name: 'friIr', title: 'Ирсэн', width:50},
-			{name: 'friYv', title: 'Явсан', width:50}
+			{dataIndex: 'friIr', header: 'Ирсэн', width:50},
+			{dataIndex: 'friYv', header: 'Явсан', width:50}
 		]
 	};
 
@@ -1540,8 +1540,8 @@ initStaticModels = function() {
 	{
 		title: 'Бямба',
 		columns : [
-			{name: 'satIr', title: 'Ирсэн', width:50},
-			{name: 'satYv', title: 'Явсан', width:50}
+			{dataIndex: 'satIr', header: 'Ирсэн', width:50},
+			{dataIndex: 'satYv', header: 'Явсан', width:50}
 		]
 	};
 
@@ -1549,8 +1549,8 @@ initStaticModels = function() {
 	{
 		title: 'Ням',
 		columns : [
-			{name: 'sunIr', title: 'Ирсэн', width:50},
-			{name: 'subYv', title: 'Явсан', width:50}
+			{dataIndex: 'sunIr', header: 'Ирсэн', width:50},
+			{dataIndex: 'subYv', header: 'Явсан', width:50}
 		]
 	};
 
@@ -1560,7 +1560,7 @@ initStaticModels = function() {
 	model['rowEditor'] = [];
 	
 	model['readStore'] = Ext.create('Ext.data.JsonStore', {
-		model: 'zeelcustomer',
+		model: 'irtuser',
 		proxy: {
 			type: 'ajax',
 			url: 'httpGW',

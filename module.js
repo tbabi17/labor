@@ -5763,7 +5763,7 @@ Ext.define('OSS.IrtUser', {
 		            }
 		        }
 		    }),
-    		columns: this.createHeaders(me.columns)    		
+    		columns: me.createHeaders(me.columns)    		
     	});    	    	
     },
     
