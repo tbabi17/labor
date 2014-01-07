@@ -3018,7 +3018,7 @@ Ext.define('OSS.ControlPanel', {
                    ['Route', 'routes', Ext.sfa.translate_arrays[langid][267], 'routeID', 450, 500, 'route-module'],                   
                    ['route-changer-data', 'module', Ext.sfa.translate_arrays[langid][700], 'id', 980, 550, 'route-changer-module'],
                    ['Route_User', 'route_user', Ext.sfa.translate_arrays[langid][288], 'id', 980, 550, 'route-user-module'],
-                   ['irt-user-data', 'module', 'Ирцийн мэдээ', 'userCode', 680, 550, 'route-user-module'],
+                   ['irts-user-data', 'module', 'Ирцийн мэдээ', 'userCode', 680, 550, 'route-user-module'],
                    ['AllDays', 'calendar', Ext.sfa.translate_arrays[langid][269], 'id', 300, 450, 'calendar-module'],
                    ['Message', 'message', 'Мессеж', 'id', 500, 350, 'message-module'],
                    ['Parent_Names', 'parent_list', 'Сүлжээ дэлгүүр', 'id', 400, 585, 'info-module'],
