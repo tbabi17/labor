@@ -1496,7 +1496,7 @@ initStaticModels = function() {
 		title: 'Даваа',
 		columns : [
 			{name: 'monIr', title: 'Ирсэн', width:50},
-			{name: 'monYv', title: 'Явсан', width:50};
+			{name: 'monYv', title: 'Явсан', width:50}
 		]
 	};
 	
@@ -1505,7 +1505,7 @@ initStaticModels = function() {
 		title: 'Мягмар',
 		columns : [
 			{name: 'thueIr', title: 'Ирсэн', width:50},
-			{name: 'thueYv', title: 'Явсан', width:50};
+			{name: 'thueYv', title: 'Явсан', width:50}
 		]
 	};
 
@@ -1514,7 +1514,7 @@ initStaticModels = function() {
 		title: 'Лхагва',
 		columns : [
 			{name: 'wedIr', title: 'Ирсэн', width:50},
-			{name: 'wedYv', title: 'Явсан', width:50};
+			{name: 'wedYv', title: 'Явсан', width:50}
 		]
 	};
 
@@ -1523,7 +1523,7 @@ initStaticModels = function() {
 		title: 'Пүрэв',
 		columns : [
 			{name: 'thurIr', title: 'Ирсэн', width:50},
-			{name: 'thurYv', title: 'Явсан', width:50};
+			{name: 'thurYv', title: 'Явсан', width:50}
 		]
 	};
 
@@ -1532,7 +1532,7 @@ initStaticModels = function() {
 		title: 'Баасан',
 		columns : [
 			{name: 'friIr', title: 'Ирсэн', width:50},
-			{name: 'friYv', title: 'Явсан', width:50};
+			{name: 'friYv', title: 'Явсан', width:50}
 		]
 	};
 
@@ -1541,7 +1541,7 @@ initStaticModels = function() {
 		title: 'Бямба',
 		columns : [
 			{name: 'satIr', title: 'Ирсэн', width:50},
-			{name: 'satYv', title: 'Явсан', width:50};
+			{name: 'satYv', title: 'Явсан', width:50}
 		]
 	};
 
@@ -1550,7 +1550,7 @@ initStaticModels = function() {
 		title: 'Ням',
 		columns : [
 			{name: 'sunIr', title: 'Ирсэн', width:50},
-			{name: 'subYv', title: 'Явсан', width:50};
+			{name: 'subYv', title: 'Явсан', width:50}
 		]
 	};
 
