@@ -3018,7 +3018,7 @@ Ext.define('OSS.ControlPanel', {
                    ['Route', 'routes', Ext.sfa.translate_arrays[langid][267], 'routeID', 450, 500, 'route-module'],                   
                    ['route-changer-data', 'module', Ext.sfa.translate_arrays[langid][700], 'id', 980, 550, 'route-changer-module'],
                    ['Route_User', 'route_user', Ext.sfa.translate_arrays[langid][288], 'id', 980, 550, 'route-user-module'],
-                   ['IrtUser', 'module', 'Ирцийн мэдээ', 'userCode', 680, 550, 'route-user-module'],
+                   ['irt-user-data', 'module', 'Ирцийн мэдээ', 'userCode', 680, 550, 'route-user-module'],
                    ['AllDays', 'calendar', Ext.sfa.translate_arrays[langid][269], 'id', 300, 450, 'calendar-module'],
                    ['Message', 'message', 'Мессеж', 'id', 500, 350, 'message-module'],
                    ['Parent_Names', 'parent_list', 'Сүлжээ дэлгүүр', 'id', 400, 585, 'info-module'],
@@ -5685,6 +5685,105 @@ Ext.define('OSS.RouteChanger', {
 			    			me.store_action.load({params:{xml:_donate('_update_customer_status', 'SELECT', ' ', ' ', ' ', me.noActiveCustoms[i] +',1')}});
 			    		}
 		    		});
+		    	}
+		    }]
+        }];
+
+    	me.addStandardButtons();
+
+		return [{
+			xtype: 'toolbar',
+			items: me.buttons
+		}];
+    }
+});
+
+Ext.define('OSS.IrtUser', {
+    extend: 'OSS.ExtendModule',
+    id:'irts-user-data',
+    
+    init : function() {
+    	this.title = 'Ирцийн мэдээ';        
+    },
+
+    createWindow : function(){
+    	var me = this;
+    	var desktop = this.app.getDesktop();
+        var win = desktop.getWindow('irts-user-data');        
+        if(!win){        	        	
+        	this.createGrid();
+            win = desktop.createWindow({
+                id: 'irts-user-data',
+                title:this.title,
+                width:700,
+                height:500,
+                iconCls: 'icon-grid',
+                animCollapse:false,
+                constrainHeader:true,
+                layout: {
+					type: 'border',
+					align: 'stretch'
+				},				
+                border: true,
+                items: [me.grid],
+	        	dockedItems: me.createToolbar()
+            });
+        }
+        this.loadStore();        
+        win.show();
+        return win;
+    },
+    
+    loadStore: function () {    
+    	var me = this;        	
+    	me.store.load({params:{xml:_donate('_user_customer_list', 'SELECT', 'user_customer_list', ' ', ' ', me.users.getValue())}});
+    },
+    
+    createStore : function() {
+    	var me = this;
+    	me.model = me.generateModel('IrtUser', 'irt-user');
+    	me.store = me.model['readStore'];
+    	me.columns = me.model['columns'];
+    },                
+	
+    createGrid : function() {
+    	var me = this;
+    	me.createStore();    	    	
+		
+		me.grid = Ext.create('Ext.grid.Panel', {    		
+    		xtype: 'grid',
+    		border: false,
+    		columnLines: true,
+    		store: me.store,    
+    		region: 'center',
+    		selModel: Ext.create('Ext.selection.CheckboxModel', {
+		        listeners: {
+		            selectionchange: function(sm, selections) {
+		                
+		            }
+		        }
+		    }),
+    		columns: this.createHeaders(me.columns)    		
+    	});    	    	
+    },
+    
+    createToolbar : function() {
+    	var me = this;    	    	    	
+    	me.users = generateLocalCombo('local_user_combo', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], 150);
+
+		me.buttons = [{
+            xtype: 'toolbar',
+            items: [me.users, {
+                text: Ext.sfa.translate_arrays[langid][326],
+                iconCls: 'refresh',
+                handler: function(){                                	
+                	me.loadStore();
+                }
+            },{
+		    	text: Ext.sfa.translate_arrays[langid][491],
+		    	iconCls: 'icon-apply',
+		    	handler: function() {
+		    		
 		    	}
 		    }]
         }];
