@@ -1464,6 +1464,119 @@ initStaticModels = function() {
 	
 	Ext.sfa.staticModels['Top_Customer'] = model;
 
+	
+	//irtsiin medeelel
+	model = [];
+	fields = [];
+	fields[0] = {name: 'userCode', type: 'string'};
+	fields[1] = {name: 'monIr'};
+	fields[2] = {name: 'monYv'};
+	fields[3] = {name: 'thueIr'};
+	fields[4] = {name: 'thueYv'};
+	fields[5] = {name: 'wedIr'};
+	fields[6] = {name: 'wedYv'};
+	fields[7] = {name: 'thurIr'};
+	fields[8] = {name: 'thurYv'};
+	fields[9] = {name: 'friIr'};
+	fields[10] = {name: 'friYv'};
+	fields[11] = {name: 'satIr'};
+	fields[12] = {name: 'satYv'};
+	fields[13] = {name: 'sunIr'};
+	fields[14] = {name: 'sunYv'};
+
+	Ext.regModel('irtuser', {	        
+		fields: fields 
+	});
+	
+	columns = [];
+	columns[0] = {name: 'userCode', title: 'Борлуулагч', renderer: Ext.sfa.renderer_arrays['renderUserCode'], width:130};	
+	
+	columns[1] = 
+	{
+		title: 'Даваа',
+		columns : [
+			{name: 'monIr', title: 'Ирсэн', width:50},
+			{name: 'monYv', title: 'Явсан', width:50};
+		]
+	};
+	
+	columns[2] = 
+	{
+		title: 'Мягмар',
+		columns : [
+			{name: 'thueIr', title: 'Ирсэн', width:50},
+			{name: 'thueYv', title: 'Явсан', width:50};
+		]
+	};
+
+	columns[3] = 
+	{
+		title: 'Лхагва',
+		columns : [
+			{name: 'wedIr', title: 'Ирсэн', width:50},
+			{name: 'wedYv', title: 'Явсан', width:50};
+		]
+	};
+
+	columns[4] = 
+	{
+		title: 'Пүрэв',
+		columns : [
+			{name: 'thurIr', title: 'Ирсэн', width:50},
+			{name: 'thurYv', title: 'Явсан', width:50};
+		]
+	};
+
+	columns[5] = 
+	{
+		title: 'Баасан',
+		columns : [
+			{name: 'friIr', title: 'Ирсэн', width:50},
+			{name: 'friYv', title: 'Явсан', width:50};
+		]
+	};
+
+	columns[6] = 
+	{
+		title: 'Бямба',
+		columns : [
+			{name: 'satIr', title: 'Ирсэн', width:50},
+			{name: 'satYv', title: 'Явсан', width:50};
+		]
+	};
+
+	columns[7] = 
+	{
+		title: 'Ням',
+		columns : [
+			{name: 'sunIr', title: 'Ирсэн', width:50},
+			{name: 'subYv', title: 'Явсан', width:50};
+		]
+	};
+
+	model['fields'] = ' ';
+	model['types'] = ' ';
+	model['columns'] = columns;
+	model['rowEditor'] = [];
+	
+	model['readStore'] = Ext.create('Ext.data.JsonStore', {
+		model: 'zeelcustomer',
+		proxy: {
+			type: 'ajax',
+			url: 'httpGW',
+			method: 'POST',
+			reader: {
+				type: 'json',
+				root:'items',
+				totalProperty: 'results'
+			},
+			actionMethods: {                    
+				read: 'POST'                   
+			}	            
+		}
+	});
+	
+	Ext.sfa.staticModels['IrtUser'] = model;
 
 	// Storage To Storage Report
 	model = [];
