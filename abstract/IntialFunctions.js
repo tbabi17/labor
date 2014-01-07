@@ -1576,7 +1576,7 @@ initStaticModels = function() {
 		}
 	});
 	
-	Ext.sfa.staticModels['IrtUser'] = model;
+	Ext.sfa.staticModels['IrtsUser'] = model;
 
 	// Storage To Storage Report
 	model = [];

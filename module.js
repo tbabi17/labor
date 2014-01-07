@@ -5741,7 +5741,7 @@ Ext.define('OSS.IrtUser', {
     
     createStore : function() {
     	var me = this;
-    	me.model = me.generateModel('IrtUser', 'irt-user');
+    	me.model = me.generateModel('IrtsUser', 'irtuser');
     	me.store = me.model['readStore'];
     	me.columns = me.model['columns'];
     },                
