@@ -5756,13 +5756,6 @@ Ext.define('OSS.IrtUser', {
     		columnLines: true,
     		store: me.store,    
     		region: 'center',
-    		selModel: Ext.create('Ext.selection.CheckboxModel', {
-		        listeners: {
-		            selectionchange: function(sm, selections) {
-		                
-		            }
-		        }
-		    }),
     		columns: me.createHeaders(me.columns)    		
     	});    	    	
     },
