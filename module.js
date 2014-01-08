@@ -5736,7 +5736,7 @@ Ext.define('OSS.IrtUser', {
     
     loadStore: function () {    
     	var me = this;        	
-    	me.store.load({params:{xml:_donate('_irts_user_list', 'SELECT', 'irts_user_list', ' ', ' ', me.start.getValue())}});
+    	me.store.load({params:{xml:_donate('_irts_user_list', 'SELECT', 'irts_user_list', ' ', ' ', me.start.getText())}});
     },
     
     createStore : function() {
