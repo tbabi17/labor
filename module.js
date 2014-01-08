@@ -5743,7 +5743,6 @@ Ext.define('OSS.IrtUser', {
     	var me = this;
     	me.model = Ext.sfa.staticModels['IrtsUser'];    
     	me.store = me.model['readStore'];
-    	me.columns = me.model['columns'];
     },                
 	
     createGrid : function() {
@@ -5756,7 +5755,7 @@ Ext.define('OSS.IrtUser', {
     		columnLines: true,
     		store: me.store,    
     		region: 'center',
-    		columns: me.createHeadersWithNumbers(me.columns)
+    		columns: me.createHeadersWithNumbers(me.model['columns'])	
     	});    	    	
     },
     
@@ -8216,7 +8215,7 @@ Ext.define('OSS.OrdersReport', {
 		    ftype: 'summary',
 			disabled: true
 		}); 
-    	me.grid = Ext.create('Ext.ux.LiveSearchGridPanel', {
+    	me.grid = Ext.create('Ext.grid.Panel', {
     		xtype: 'grid',
     		border: false,
     		store: me.store,
