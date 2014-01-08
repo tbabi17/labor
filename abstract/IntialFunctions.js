@@ -1550,7 +1550,7 @@ initStaticModels = function() {
 		title: 'Ням',
 		columns : [
 			{dataIndex: 'sunIr', text: 'Ирсэн', width:50},
-			{dataIndex: 'subYv', text: 'Явсан', width:50}
+			{dataIndex: 'sunYv', text: 'Явсан', width:50}
 		]
 	};
 
