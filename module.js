@@ -5736,7 +5736,7 @@ Ext.define('OSS.IrtUser', {
     
     loadStore: function () {    
     	var me = this;        	
-    	me.store.load({params:{xml:_donate('_user_customer_list', 'SELECT', 'user_customer_list', ' ', ' ', me.users.getValue())}});
+    	me.store.load({params:{xml:_donate('_irts_user_list', 'SELECT', 'irts_user_list', ' ', ' ', me.start.getValue())}});
     },
     
     createStore : function() {
@@ -5761,11 +5761,12 @@ Ext.define('OSS.IrtUser', {
     
     createToolbar : function() {
     	var me = this;    	    	    	
-    	me.users = generateLocalCombo('local_user_combo', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], 150);
+		
+		me.start = me.generateDateField('irts_date1',firstDay);
 
 		me.buttons = [{
             xtype: 'toolbar',
-            items: [me.users, {
+            items: [me.start, {
                 text: Ext.sfa.translate_arrays[langid][326],
                 iconCls: 'refresh',
                 handler: function(){                                	
