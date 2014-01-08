@@ -5755,7 +5755,7 @@ Ext.define('OSS.IrtUser', {
     		columnLines: true,
     		store: me.store,    
     		region: 'center',
-    		columns: me.createHeadersWithNumbers(me.model['columns'])	
+    		columns: me.createHeaders(me.model['columns'])
     	});    	    	
     },
     
