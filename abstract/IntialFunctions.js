@@ -1495,8 +1495,8 @@ initStaticModels = function() {
 	{
 		title: 'Даваа',
 		columns : [
-			{dataIndex: 'monIr', title: 'Ирсэн', width:50},
-			{dataIndex: 'monYv', title: 'Явсан', width:50}
+			{dataIndex: 'monIr', text: 'Ирсэн', width:50},
+			{dataIndex: 'monYv', text: 'Явсан', width:50}
 		]
 	};
 	
@@ -1504,8 +1504,8 @@ initStaticModels = function() {
 	{
 		title: 'Мягмар',
 		columns : [
-			{dataIndex: 'thueIr', title: 'Ирсэн', width:50},
-			{dataIndex: 'thueYv', title: 'Явсан', width:50}
+			{dataIndex: 'thueIr', text: 'Ирсэн', width:50},
+			{dataIndex: 'thueYv', text: 'Явсан', width:50}
 		]
 	};
 
@@ -1513,8 +1513,8 @@ initStaticModels = function() {
 	{
 		title: 'Лхагва',
 		columns : [
-			{dataIndex: 'wedIr', title: 'Ирсэн', width:50},
-			{dataIndex: 'wedYv', title: 'Явсан', width:50}
+			{dataIndex: 'wedIr', text: 'Ирсэн', width:50},
+			{dataIndex: 'wedYv', text: 'Явсан', width:50}
 		]
 	};
 
@@ -1522,8 +1522,8 @@ initStaticModels = function() {
 	{
 		title: 'Пүрэв',
 		columns : [
-			{dataIndex: 'thurIr', title: 'Ирсэн', width:50},
-			{dataIndex: 'thurYv', title: 'Явсан', width:50}
+			{dataIndex: 'thurIr', text: 'Ирсэн', width:50},
+			{dataIndex: 'thurYv', text: 'Явсан', width:50}
 		]
 	};
 
@@ -1531,8 +1531,8 @@ initStaticModels = function() {
 	{
 		title: 'Баасан',
 		columns : [
-			{dataIndex: 'friIr', title: 'Ирсэн', width:50},
-			{dataIndex: 'friYv', title: 'Явсан', width:50}
+			{dataIndex: 'friIr', text: 'Ирсэн', width:50},
+			{dataIndex: 'friYv', text: 'Явсан', width:50}
 		]
 	};
 
@@ -1540,8 +1540,8 @@ initStaticModels = function() {
 	{
 		title: 'Бямба',
 		columns : [
-			{dataIndex: 'satIr', title: 'Ирсэн', width:50},
-			{dataIndex: 'satYv', title: 'Явсан', width:50}
+			{dataIndex: 'satIr', text: 'Ирсэн', width:50},
+			{dataIndex: 'satYv', text: 'Явсан', width:50}
 		]
 	};
 
@@ -1549,8 +1549,8 @@ initStaticModels = function() {
 	{
 		title: 'Ням',
 		columns : [
-			{dataIndex: 'sunIr', title: 'Ирсэн', width:50},
-			{dataIndex: 'subYv', title: 'Явсан', width:50}
+			{dataIndex: 'sunIr', text: 'Ирсэн', width:50},
+			{dataIndex: 'subYv', text: 'Явсан', width:50}
 		]
 	};
 
