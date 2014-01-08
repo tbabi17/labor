@@ -8224,7 +8224,7 @@ Ext.define('OSS.OrdersReport', {
     		columnLines: true,
 			split: true,
 			features: [me.summary],
-    		columns: me.createHeadersWithNumbers(me.model['columns'])
+    		columns: me.createHeadersMixed(me.model['columns'])
     	});    			
     },
     
