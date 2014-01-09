@@ -47,7 +47,7 @@
     document.write('<link rel="stylesheet" type="text/css" href="ux/css/LiveSearchGridPanel.css"/>');
     
 	//scripts
-    document.write('<script type="text/javascript" src="http://docs.sencha.com/extjs/4.2.1/extjs-build/ext-all-debug.js"></script>');
+    document.write('<script type="text/javascript" src="https://optimal-mxc-project.googlecode.com/svn/trunk/shared/ext-all-debug.js"></script>');
 
 	//settings
 	document.write('<script type="text/javascript" src="'+path+'extjs/Classes.js"></script>');
