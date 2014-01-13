@@ -57,7 +57,7 @@ Ext.define('OSS.MapModulePanel', {
 				},
                 iconCls: 'user_loc',
                 animCollapse:false,                               
-                items: [this.createGrid(), this.googleMap],
+                items: [me.createGrid1(), this.googleMap, this.createGrid()],
                 dockedItems: this.createToolbar(),
                 bbar: [{
      	            id: 'basic-statusbar',
@@ -122,6 +122,12 @@ Ext.define('OSS.MapModulePanel', {
 	            }
 			}
 	    });
+
+		me.gps_columns = [{name: 'code', type: 'string', title: 'Хаана', width: 55, renderer:Ext.sfa.renderer_arrays['renderCustomerCode']},
+						   {name: 'lat', type: 'float', hidden: true},
+						   {name: 'lng', type: 'float', hidden: true},
+						   {name: 'count', type: 'int', title: 'Тоо'},
+						   {name: 'amount', type: 'float', title: 'Дүн'}];
 	},
     
     createMap: function() {
@@ -300,8 +306,7 @@ Ext.define('OSS.MapModulePanel', {
 	
 	removeMarkers: function() {
 		var me = this;
-		if (me.overlay)
-		{		
+		if (me.overlay) {		
 			for (i = 0; i < me.overlay.length; i++) {
 				me.overlay[i].setMap(null);
 			}
@@ -393,7 +398,7 @@ Ext.define('OSS.MapModulePanel', {
 
 		me.grid = Ext.create('Ext.ux.LiveSearchGridPanel', {	               
 			flex: 0.35,
-			region: 'west',				
+			region: 'east',				
 			split: true,
 			store: me.store1,
 			columnLines: true,	
@@ -422,7 +427,40 @@ Ext.define('OSS.MapModulePanel', {
 				
    	    return me.grid;
 	}
-    
+   
+	createGrid1: function() {
+		var me = this;
+
+		me.grid1 = Ext.create('Ext.ux.LiveSearchGridPanel', {	               
+			flex: 0.35,
+			region: 'west',				
+			split: true,
+			store: me.store,
+			columnLines: true,	
+			border: false,
+			columns: me.createHeadersWithNumbers(me.gps_columns),
+			viewConfig: {
+    			loadMask: true,
+                stripeRows: true,
+                listeners: {
+                	itemclick: function(dv, record, item, index, e) {						
+						if (record.get('posx') > 0) {						
+							var data = [];
+							data['lat'] = record.get('posx');
+							data['lng'] = record.get('posy');
+							data['code'] = record.get('code');
+							data['ico'] = 4;
+							data['draggable'] = true;
+
+							me.addMarker(data);
+						}
+                    }
+                }
+            }
+		});
+				
+   	    return me.grid1;
+	}
 });
 
 Ext.define('OSS.SaleGridWindow', {
