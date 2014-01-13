@@ -2995,6 +2995,11 @@ function loadScript() {
   script.type = 'text/javascript';
   script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=initialize';
   document.body.appendChild(script);  
+
+  var script1 = document.createElement('script');
+  script1.type = 'text/javascript';
+  script1.src = 'http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.8/src/markerwithlabel.js';
+  document.body.appendChild(script1);  
 }
 
 function initialize() {
