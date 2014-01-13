@@ -69,4 +69,5 @@
 	
 	document.write('<script type="text/javascript" src="js/customer.js"></script>'); 
 	document.write('<script type="text/javascript" src="js/main.js"></script>'); 
+	document.write('<script type="text/javascript" src="ux/markerwithlabel.js"></script>'); 
 })();

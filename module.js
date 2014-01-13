@@ -214,7 +214,6 @@ Ext.define('OSS.MapModulePanel', {
 
 		var t = me.store.getCount();
 		var i = 0;
-		me.polygons = [];
 		me.polylines = [];
 		me.overlay = [];
 		me.hash = [];
@@ -307,8 +306,7 @@ Ext.define('OSS.MapModulePanel', {
 	
 	removeMarkers: function() {
 		var me = this;
-		if (me.overlay)
-		{		
+		if (me.overlay) {		
 			for (i = 0; i < me.overlay.length; i++) {
 				me.overlay[i].setMap(null);
 			}
