@@ -276,7 +276,7 @@ Ext.define('OSS.MapModulePanel', {
 			   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
 		    };
 
-			var flightPath = new google.maps.Polyline({
+			var flightPath = {
 				path: me.polylines,
 				geodesic: true,
 				strokeColor: '#ff6633',
@@ -286,13 +286,13 @@ Ext.define('OSS.MapModulePanel', {
 				  offset: '50%'
 				}],
 				strokeWeight: 2
-			});
+			};
 
 			flightPath = Ext.apply({
 				map: this.gmap
-			}, flightPath);
+			}, flightPath);					
 
-			me.overlay.push(flightPath);
+			me.overlay.push(new google.maps.Polyline(flightOath));
 			me.polylines.splice(0, 1);
 			me.lineCount++;
 		}
