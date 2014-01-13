@@ -160,7 +160,7 @@ Ext.define('OSS.MapModulePanel', {
 	markerSelectedUser: function(userCode) {
 		var me = this;
 				
-		me.store.load({params:{xml:_donate('_map_selected_user_locations', 'SELECT', ' ', ' ', ' ', userCode+','+userCode+','+me.currentDate+','+userCode+','+me.currentDate)}, 
+		me.store.load({params:{xml:_donate('_map_selected_user_locations', 'SELECT', ' ', ' ', ' ', userCode+','+userCode+','+me.currentDate+','+userCode+','+me.currentDate+','+userCode+','+me.currentDate)}, 
 			 callback: function() {
 				me.putMarkers();
 			 }
@@ -169,7 +169,7 @@ Ext.define('OSS.MapModulePanel', {
 	
 	markerSelectedUserStep: function(userCode) {
 		var me = this;
-		me.store.load({params:{xml:_donate('_map_selected_user_locations', 'SELECT', ' ', ' ', ' ', userCode+','+userCode+','+me.currentDate+','+userCode+','+me.currentDate)}, 
+		me.store.load({params:{xml:_donate('_map_selected_user_locations', 'SELECT', ' ', ' ', ' ', userCode+','+userCode+','+me.currentDate+','+userCode+','+me.currentDate+','+userCode+','+me.currentDate)}, 
 			 callback: function() {		
 				me.putMarkersStep();							
 			 }
