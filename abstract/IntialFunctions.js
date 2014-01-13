@@ -2997,13 +2997,6 @@ function loadScript() {
   document.body.appendChild(script);   
 }
 
-function loadExtendScript() {
-  var script1 = document.createElement('script');
-  script1.type = 'text/javascript';
-  script1.src = 'ux/markerwithlabel.js';
-  document.body.appendChild(script1); 
-}
-
 function initialize() {
 	console.log('google map script loaded');
 }
