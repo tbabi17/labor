@@ -292,7 +292,7 @@ Ext.define('OSS.MapModulePanel', {
 				map: this.gmap
 			}, flightPath);					
 
-			me.overlay.push(new google.maps.Polyline(flightOath));
+			me.overlay.push(new google.maps.Polyline(flightPath));
 			me.polylines.splice(0, 1);
 			me.lineCount++;
 		}
