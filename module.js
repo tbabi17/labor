@@ -210,6 +210,7 @@ Ext.define('OSS.MapModulePanel', {
 
 	putMarkers: function() {
 		var me = this;
+		me.removeMarkers();
 
 		var t = me.store.getCount();
 		var i = 0;
@@ -318,7 +319,6 @@ Ext.define('OSS.MapModulePanel', {
 		
 		me.overlay = [];
 		me.polylines = [];
-		me.googleMap.getMap().clearOverlays();
 	},
 
     createToolbar: function() {
