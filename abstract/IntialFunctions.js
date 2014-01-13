@@ -2994,12 +2994,14 @@ function loadScript() {
   var script = document.createElement('script');
   script.type = 'text/javascript';
   script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=initialize';
-  document.body.appendChild(script);  
+  document.body.appendChild(script);   
+}
 
+function loadExtendScript() {
   var script1 = document.createElement('script');
   script1.type = 'text/javascript';
   script1.src = 'ux/markerwithlabel.js';
-  document.body.appendChild(script1);  
+  document.body.appendChild(script1); 
 }
 
 function initialize() {
