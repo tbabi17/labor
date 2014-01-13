@@ -124,7 +124,7 @@ Ext.define('OSS.MapModulePanel', {
 	    });
 
 		me.gps_columns = [{name: 'code', type: 'string', title: 'Хаана', flex: 1, renderer:Ext.sfa.renderer_arrays['renderCustomerCode']},
-						   {name: 'hhmmss', type: 'string', 'Цаг', width: 60},
+						   {name: 'hhmmss', type: 'string', title: 'Цаг', width: 60},
 						   {name: 'count', type: 'int', title: 'Тоо', width: 55},
 						   {name: 'amount', type: 'float', title: 'Дүн', width: 75}];
 	},
