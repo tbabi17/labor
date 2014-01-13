@@ -426,7 +426,7 @@ Ext.define('OSS.MapModulePanel', {
 		});
 				
    	    return me.grid;
-	}
+	},
    
 	createGrid1: function() {
 		var me = this;
