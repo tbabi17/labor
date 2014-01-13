@@ -213,6 +213,7 @@ Ext.define('OSS.MapModulePanel', {
 
 		var t = me.store.getCount();
 		var i = 0;
+		me.polygons = [];
 		me.polylines = [];
 		me.overlay = [];
 		me.hash = [];
@@ -239,6 +240,7 @@ Ext.define('OSS.MapModulePanel', {
 	hash: [],
 	lineCount: 0,
 	overlay: [],
+	polygons: [],
 	
 	addMarker: function(data, t, i) {
 		if (data['lat'] == 0) return;
@@ -276,7 +278,7 @@ Ext.define('OSS.MapModulePanel', {
 			   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
 		    };
 
-			var flightPath = {
+			var flightPath = new google.maps.Polyline({
 				path: me.polylines,
 				geodesic: true,
 				strokeColor: '#ff6633',
@@ -286,13 +288,10 @@ Ext.define('OSS.MapModulePanel', {
 				  offset: '50%'
 				}],
 				strokeWeight: 2
-			};
+			});
 
-			flightPath = Ext.apply({
-				map: this.gmap
-			}, flightPath);					
-
-			me.overlay.push(new google.maps.Polyline(flightPath));
+			flightPath.setMap(me.googleMap.gmap);
+			me.polygons.push(flightPath);
 			me.polylines.splice(0, 1);
 			me.lineCount++;
 		}
@@ -307,6 +306,13 @@ Ext.define('OSS.MapModulePanel', {
 		{		
 			for (i = 0; i < me.overlay.length; i++) {
 				me.overlay[i].setMap(null);
+			}
+		}
+
+		if (me.polygons)
+		{		
+			for (i = 0; i < me.polygons.length; i++) {
+				me.polygons[i].setMap(null);
 			}
 		}
 		
