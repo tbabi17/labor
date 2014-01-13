@@ -213,6 +213,10 @@ Ext.define('OSS.MapModulePanel', {
 
 		var t = me.store.getCount();
 		var i = 0;
+		me.polylines = [];
+		me.overlay = [];
+		me.hash = [];
+		me.lineCount = 0;
 		me.store.each(function(rec){
 			me.addMarker(rec.data, t, i);
 			i++;
@@ -250,11 +254,11 @@ Ext.define('OSS.MapModulePanel', {
 		var size = data['ico']==3?16:24;
 		var url = me.getIcon(data, t, i);
 	    var icon = new google.maps.MarkerImage(	    		
-	    		 	url,
-		            new google.maps.Size(size, size), //size
-		            new google.maps.Point(0,0), //origin
-		            new google.maps.Point(size/2, size),
-		            new google.maps.Size(size, size)//scale 
+			url,
+			new google.maps.Size(size, size), //size
+			new google.maps.Point(0,0), //origin
+			new google.maps.Point(size/2, size),
+			new google.maps.Size(size, size)//scale 
 		);
 			    
 		var marker = {
