@@ -313,7 +313,8 @@ Ext.define('OSS.MapModulePanel', {
 				me.overlay[i].setMap(null);
 			}
 		}
-		me.flightPath.setMap(null);		
+		if (me.flightPath)		
+			me.flightPath.setMap(null);	
 		me.overlay = [];
 		me.polylines = [];
 	},
