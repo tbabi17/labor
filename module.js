@@ -288,8 +288,8 @@ Ext.define('OSS.MapModulePanel', {
 				strokeWeight: 2
 			});
 
-			me.overlay.push(me.flightPath);
 			me.flightPath.setMap(me.googleMap.gmap);
+			me.overlay.push(me.flightPath);
 			me.polylines.splice(0, 1);
 			me.lineCount++;
 		}
@@ -306,6 +306,8 @@ Ext.define('OSS.MapModulePanel', {
 				me.overlay[i].setMap(null);
 			}
 		}
+
+		me.polylines = [];
 	},
 
     createToolbar: function() {
