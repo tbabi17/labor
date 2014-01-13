@@ -2998,7 +2998,7 @@ function loadScript() {
 
   var script1 = document.createElement('script');
   script1.type = 'text/javascript';
-  script1.src = 'http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.8/src/markerwithlabel.js';
+  script1.src = 'ux/markerwithlabel.js';
   document.body.appendChild(script1);  
 }
 
