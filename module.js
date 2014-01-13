@@ -306,9 +306,9 @@ Ext.define('OSS.MapModulePanel', {
 				me.overlay[i].setMap(null);
 			}
 		}
-
+		
+		me.overlay = [];
 		me.polylines = [];
-
 		me.googleMap.getMap().clearOverlays();
 	},
 
