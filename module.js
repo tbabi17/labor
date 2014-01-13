@@ -308,6 +308,8 @@ Ext.define('OSS.MapModulePanel', {
 		}
 
 		me.polylines = [];
+
+		me.googleMap.getMap().clearOverlays();
 	},
 
     createToolbar: function() {
