@@ -303,7 +303,7 @@ Ext.define('OSS.MapModulePanel', {
 		if (me.overlay)
 		{		
 			for (i = 0; i < me.overlay.length; i++) {
-				me.overlay.setMap(null);
+				me.overlay[i].setMap(null);
 			}
 		}
 	},
