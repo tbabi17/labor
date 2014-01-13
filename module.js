@@ -215,7 +215,8 @@ Ext.define('OSS.MapModulePanel', {
 
 	putMarkers: function() {
 		var me = this;
-
+		
+		/*
 		var t = me.store.getCount();
 		var i = 0;
 		me.polylines = [];
@@ -225,7 +226,7 @@ Ext.define('OSS.MapModulePanel', {
 		me.store.each(function(rec){
 			me.addMarker(rec.data, t, i);
 			i++;
-		});
+		});*/
 	},
 
 	putMarkersStep: function() {
