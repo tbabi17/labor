@@ -223,6 +223,24 @@ Ext.define('OSS.MapModulePanel', {
 			me.addMarker(rec.data, t, i);
 			i++;
 		});
+
+		var lineSymbol = {
+		   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+		};
+
+		me.flightPath = new google.maps.Polyline({
+			path: me.polylines,
+			geodesic: true,
+			strokeColor: '#ff6633',
+			strokeOpacity: 1.0,
+			icons: [{
+			  icon: lineSymbol,
+			  offset: '50%'
+			}],
+			strokeWeight: 2
+		});
+
+		me.flightPath.setMap(me.googleMap.gmap);
 	},
 
 	putMarkersStep: function() {
@@ -241,7 +259,6 @@ Ext.define('OSS.MapModulePanel', {
 	hash: [],
 	lineCount: 0,
 	overlay: [],
-	polygons: [],
 	
 	addMarker: function(data, t, i) {
 		if (data['lat'] == 0) return;
@@ -274,28 +291,15 @@ Ext.define('OSS.MapModulePanel', {
 		
 		me.polylines.push(new google.maps.LatLng(data['lat'], data['lng']));
 		
+		/*
 		if (me.polylines.length == 2) {		
-			var lineSymbol = {
-			   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
-		    };
-
-			var flightPath = new google.maps.Polyline({
-				path: me.polylines,
-				geodesic: true,
-				strokeColor: '#ff6633',
-				strokeOpacity: 1.0,
-				icons: [{
-				  icon: lineSymbol,
-				  offset: '50%'
-				}],
-				strokeWeight: 2
-			});
+			
 
 			flightPath.setMap(me.googleMap.gmap);
 			me.polygons.push(flightPath);
 			me.polylines.splice(0, 1);
 			me.lineCount++;
-		}
+		}*/
 
 		var marker = me.googleMap.addMarker(marker);
 		me.overlay.push(marker);
@@ -309,14 +313,7 @@ Ext.define('OSS.MapModulePanel', {
 				me.overlay[i].setMap(null);
 			}
 		}
-
-		if (me.polygons)
-		{		
-			for (i = 0; i < me.polygons.length; i++) {
-				me.polygons[i].setMap(null);
-			}
-		}
-		
+		me.flightPath.setMap(null);		
 		me.overlay = [];
 		me.polylines = [];
 	},
