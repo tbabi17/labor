@@ -210,7 +210,6 @@ Ext.define('OSS.MapModulePanel', {
 
 	putMarkers: function() {
 		var me = this;
-		me.removeMarkers();
 
 		var t = me.store.getCount();
 		var i = 0;
@@ -222,24 +221,6 @@ Ext.define('OSS.MapModulePanel', {
 			me.addMarker(rec.data, t, i);
 			i++;
 		});
-
-		var lineSymbol = {
-		   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
-		};
-
-		me.flightPath = new google.maps.Polyline({
-			path: me.polylines,
-			geodesic: true,
-			strokeColor: '#ff6633',
-			strokeOpacity: 1.0,
-			icons: [{
-			  icon: lineSymbol,
-			  offset: '50%'
-			}],
-			strokeWeight: 2
-		});
-
-		me.flightPath.setMap(me.googleMap.gmap);
 	},
 
 	putMarkersStep: function() {
@@ -290,15 +271,28 @@ Ext.define('OSS.MapModulePanel', {
 		
 		me.polylines.push(new google.maps.LatLng(data['lat'], data['lng']));
 		
-		/*
 		if (me.polylines.length == 2) {		
-			
+			var lineSymbol = {
+			   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+		    };
 
-			flightPath.setMap(me.googleMap.gmap);
-			me.polygons.push(flightPath);
+			me.flightPath = new google.maps.Polyline({
+				path: me.polylines,
+				geodesic: true,
+				strokeColor: '#ff6633',
+				strokeOpacity: 1.0,
+				icons: [{
+				  icon: lineSymbol,
+				  offset: '50%'
+				}],
+				strokeWeight: 2
+			});
+
+			me.flightPath.setMap(me.googleMap.gmap);
+			me.overlay.push(me.flightPath);
 			me.polylines.splice(0, 1);
 			me.lineCount++;
-		}*/
+		}
 
 		var marker = me.googleMap.addMarker(marker);
 		me.overlay.push(marker);
@@ -306,15 +300,16 @@ Ext.define('OSS.MapModulePanel', {
 	
 	removeMarkers: function() {
 		var me = this;
-		if (me.overlay) {		
+		if (me.overlay)
+		{		
 			for (i = 0; i < me.overlay.length; i++) {
 				me.overlay[i].setMap(null);
 			}
 		}
-		if (me.flightPath)		
-			me.flightPath.setMap(null);	
+		
 		me.overlay = [];
 		me.polylines = [];
+		me.googleMap.getMap().clearOverlays();
 	},
 
     createToolbar: function() {
