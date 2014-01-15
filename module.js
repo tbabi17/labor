@@ -433,7 +433,7 @@ Ext.define('OSS.MapModulePanel', {
 		var me = this;
 
 		me.grid1 = Ext.create('Ext.ux.LiveSearchGridPanel', {	               
-			flex: 0.35,
+			flex: 0.3,
 			region: 'west',				
 			split: true,
 			store: me.store,
