@@ -277,6 +277,7 @@ Ext.define('OSS.MapModulePanel', {
 		
 		me.polylines.push(new google.maps.LatLng(data['lat'], data['lng']));
 		
+		/*
 		if (me.polylines.length == 2) {		
 			var lineSymbol = {
 			   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
@@ -298,7 +299,7 @@ Ext.define('OSS.MapModulePanel', {
 			me.overlay.push(me.flightPath);
 			me.polylines.splice(0, 1);
 			me.lineCount++;
-		}
+		}*/
 
 		var marker = me.googleMap.addMarker(marker);
 		me.overlay.push(marker);
@@ -445,7 +446,7 @@ Ext.define('OSS.MapModulePanel', {
                 listeners: {
                 	itemclick: function(dv, record, item, index, e) {						
 						if (record.get('lat') > 0) {						
-							var data = [];
+							var data = [];							
 							data['lat'] = record.get('lat');
 							data['lng'] = record.get('lng');
 							data['code'] = record.get('code');
