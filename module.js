@@ -74,7 +74,7 @@ Ext.define('OSS.MapModulePanel', {
 	createStore: function() {
 		var me = this;
 		Ext.regModel('user_markers', {		    
-    		idProperty: 'code',
+    		idProperty: 'id',
     	    fields: [                
     	        {name: 'id', type: 'int'},
     	        {name: 'code', type: 'string'},
