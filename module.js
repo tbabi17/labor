@@ -444,10 +444,10 @@ Ext.define('OSS.MapModulePanel', {
                 stripeRows: true,
                 listeners: {
                 	itemclick: function(dv, record, item, index, e) {						
-						if (record.get('posx') > 0) {						
+						if (record.get('lat') > 0) {						
 							var data = [];
-							data['lat'] = record.get('posx');
-							data['lng'] = record.get('posy');
+							data['lat'] = record.get('lat');
+							data['lng'] = record.get('lng');
 							data['code'] = record.get('code');
 							data['ico'] = 4;
 							data['draggable'] = true;
