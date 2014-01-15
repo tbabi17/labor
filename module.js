@@ -76,6 +76,7 @@ Ext.define('OSS.MapModulePanel', {
 		Ext.regModel('user_markers', {		    
     		idProperty: 'code',
     	    fields: [                
+    	        {name: 'id', type: 'int'},
     	        {name: 'code', type: 'string'},
     	        {name: 'lat', type: 'float'},
     	        {name: 'lng', type: 'float'},
