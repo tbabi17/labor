@@ -89,6 +89,7 @@ Ext.define('OSS.MapModulePanel', {
 
     	me.store = Ext.create('Ext.data.JsonStore', {
     	    model: 'user_markers',    
+			pageSize: 1000,
     	    proxy: {
     			type: 'ajax',
     			url: 'httpGW',
@@ -113,6 +114,7 @@ Ext.define('OSS.MapModulePanel', {
     	
     	me.store1 = Ext.create('Ext.data.JsonStore', {
 	        model: 'customer_columns',	        
+			pageSize: 1000,
 	        proxy: {
 				type: 'ajax',
 				url: 'httpGW',
