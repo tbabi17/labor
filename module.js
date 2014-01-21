@@ -8420,6 +8420,12 @@ Ext.define('OSS.CustomPriceWindow', {
     	me.price_types = me.generateLocalCombo('local_customerType_combo', 'price_types', 'id', 'descr', Ext.sfa.translate_arrays[langid][392], 100);
     	
 		me.buttons = [me.price_types,{
+			text: Ext.sfa.translate_arrays[langid][490],
+			iconCls: 'icon-add',
+			handler: function() {
+
+			}
+		},{
 				text: Ext.sfa.translate_arrays[langid][326],
 				iconCls: 'refresh',
 				handler: function() {
