@@ -1505,6 +1505,12 @@ Ext.define('OSS.EngineModule', {
 												window.open('http://202.131.237.150/inv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0');
 											} else
 												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
+										} else
+										if (me.id == 'orders-report-win-pre' && section == 'cosmo') {
+											if (me.users.getValue() != 'null') {
+												window.open('http://202.131.237.150/inv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0');
+											} else
+												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
 										}
 									}	                
 								};
