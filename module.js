@@ -3339,7 +3339,7 @@ Ext.define('OSS.StorageModulePanel', {
 
     init : function(){  	
     	this.title = Ext.sfa.translate_arrays[langid][509];
-    	this.width = 500;
+    	this.width = 600;
     	this.height = 250;
     },
           
