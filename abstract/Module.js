@@ -1335,7 +1335,7 @@ Ext.define('OSS.EngineModule', {
             	   	border: false,
             	   	defaultType: 'textfield',
             	   	layout: 'column',            	   	
-            	   	items: me.forms
+            	   	items: []//me.forms
                }
 	        ],
 	        buttons: [{
