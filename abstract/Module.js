@@ -869,7 +869,7 @@ Ext.define('OSS.EngineModule', {
 
     			if (name == 'Promotion') allowBlank = true;
     			
-				alert(column.type+' '+column.name);
+				alert(column.name+' '+xtype);
     			if (Ext.sfa.combos[this.duplicateFieldCombo(name, column.name)] && column.title != 'ID') { 
     				var combo = Ext.sfa.combos[this.duplicateFieldCombo(name, column.name)].split(',');
 
