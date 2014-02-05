@@ -881,25 +881,25 @@ Ext.define('OSS.EngineModule', {
     					this.forms[this.count].name = column.name;
     				}
     				else {
-					var dvalue = me.getDefaultValue(combo[0]);	
-    				this.forms[this.count] = {
-    					id: 'forms_'+this.name+'_'+i,
-    					fieldLabel: column.title,
-    				    name: column.name,            
-    				    margin: '4 0 0 4',
-    				    xtype: 'combobox',
-    				    forceSelection : true,				    				    
-    				    typeAhead : false,
-						value : dvalue,
-    				    store: Ext.sfa.stores[combo[0]],
-    				    displayField: combo[2],
-    				    valueField: combo[1],
-    				    queryMode: 'local',
-    				    allowBlank: allowBlank,
-    				    emptyText: column.title,
-    				    columnWidth: fW
-    				}
-				}
+						var dvalue = me.getDefaultValue(combo[0]);	
+						this.forms[this.count] = {
+							id: 'forms_'+this.name+'_'+i,
+							fieldLabel: column.title,
+							name: column.name,            
+							margin: '4 0 0 4',
+							xtype: 'combobox',
+							forceSelection : true,				    				    
+							typeAhead : false,
+							value : dvalue,
+							store: Ext.sfa.stores[combo[0]],
+							displayField: combo[2],
+							valueField: combo[1],
+							queryMode: 'local',
+							allowBlank: allowBlank,
+							emptyText: column.title,
+							columnWidth: fW
+						}
+					}
     			} else {
     				var mk = this.checkMaskRe(name, column.name)
     				if (mk > 0) {
@@ -1335,7 +1335,7 @@ Ext.define('OSS.EngineModule', {
             	   	border: false,
             	   	defaultType: 'textfield',
             	   	layout: 'column',            	   	
-            	   	items: []//me.forms
+            	   	items: me.forms
                }
 	        ],
 	        buttons: [{
