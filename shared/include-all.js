@@ -48,12 +48,13 @@
     
 	//scripts
     document.write('<script type="text/javascript" src="https://optimal-mxc-project.googlecode.com/svn/trunk/shared/ext-all-debug.js"></script>');
+	document.write('<script type="text/javascript" src="ux/form/NumericField.js"></script>'); 
 
 	//settings
 	document.write('<script type="text/javascript" src="'+path+'extjs/Classes.js"></script>');
 	document.write('<script type="text/javascript" src="js/init.js"></script>'); 
 	document.write('<script type="text/javascript" src="'+path+'abstract/IntialFunctions.js"></script>'); 
-	
+
 	//main classes	
 	document.write('<script type="text/javascript" src="'+path+'abstract/Module.js"></script>'); 
 	document.write('<script type="text/javascript" src="js/abstract/Module.js"></script>'); 
