@@ -869,10 +869,9 @@ Ext.define('OSS.EngineModule', {
 
     			if (name == 'Promotion') allowBlank = true;
     			
-				alert(column.name+' '+xtype);
     			if (Ext.sfa.combos[this.duplicateFieldCombo(name, column.name)] && column.title != 'ID') { 
     				var combo = Ext.sfa.combos[this.duplicateFieldCombo(name, column.name)].split(',');
-
+					alert(column.name+' '+xtype+' '+combo);
     				if (combo[0].indexOf("_remote") != -1) {
     					this.forms[this.count] = this.generateRemoteComboWithFilter(combo[0], 
     							combo[3], combo[1], combo[2], Ext.sfa.translate_arrays[langid][combo[4]], mode);
@@ -902,6 +901,7 @@ Ext.define('OSS.EngineModule', {
 						}
 					}
     			} else {
+					alert(column.name+' '+xtype);
     				var mk = this.checkMaskRe(name, column.name)
     				if (mk > 0) {
     					var maskRe;
