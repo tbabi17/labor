@@ -3001,6 +3001,8 @@ Ext.define('OSS.KernelPanel', {
                 items: [this.createPanel(name, model, id)]
             });
         }
+		console.log(this.id);
+
         win.show();
         return win;               
     }     
