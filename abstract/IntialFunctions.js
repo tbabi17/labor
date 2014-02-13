@@ -926,7 +926,7 @@ loadOptimalDatas = function() {
 	
 	comboData.load({params:{xml:_donate('Combos', 'SELECT', 'Combos', 'name,combo1,combo2,combo3,combo4', 's,s,s,s,s', ' '), limit: 50}});
 	
-	settingsData.load({params:{xml:_donate('Settings', 'SELECT', 'Settings', 'name,value,descr', 's,s,s', " WHERE type=1 and (userCode='15' or userCode='"+module+"' or userCode='"+logged+"') ORDER by userCode")}, callback: function() {			
+	settingsData.load({params:{xml:_donate('Settings', 'SELECT', 'Settings', 'name,value,descr', 's,s,s', " WHERE type=1 and (userCode='"+module+"') ORDER by userCode")}, callback: function() {			
 		var store = settingsData.queryBy(function fn(record,id) {				 
 		     return record.get('descr') == 'time'; 
 		}); 
