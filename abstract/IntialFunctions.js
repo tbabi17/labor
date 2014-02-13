@@ -13,8 +13,6 @@ Ext.require([
  * 2013-01-02
  */
 
-var Ext.sfa.permit = [];
-
 Ext.define('Ext.ux.desktop.ShortcutModel', {
     extend: 'Ext.data.Model',
     fields: [
