@@ -3205,12 +3205,26 @@ Ext.define('OSS.ControlPanel', {
     callModule: function(name) {    	
     	var module = this.app.getModule(name),                        		                        		
 		win = module && module.createWindow();
+		
+		if (hidden_values[module]) {
+    		Ext.MessageBox.alert('warning', 'Хандалтыг зөвшөөрөхгүй !', function() {
+    			
+    		});
+    		return;
+    	}
 
         if (win)
         	this.app.getDesktop().restoreWindow(win);
     },
 	
 	createModule: function(nodes, name) {
+		if (hidden_values[nodes[0].get('module')]) {
+    		Ext.MessageBox.alert('warning', 'Хандалтыг зөвшөөрөхгүй !', function() {
+    			
+    		});
+    		return;
+    	}
+
 		if (this.called == false)
 		{		
 			var	module = new OSS.KernelPanel();
