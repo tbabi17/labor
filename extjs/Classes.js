@@ -81,7 +81,7 @@ Ext.define('Ext.ux.desktop.Desktop', {
    	        		return Ext.sfa.renderer_arrays['renderUserCode'](data.userCode);
    	        	},
    	        	renderMoneyValue: function (v) {
-   	        		if (hidden_values['show_money_value'] == 'off')
+   	        		if (hidden_values['show_money_value'])
    	        			return '-.--';
    	        		
    	        		return Ext.util.Format.number(v.amount, '00,00,000.00');
