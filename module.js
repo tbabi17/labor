@@ -105,8 +105,8 @@ Ext.define('OSS.MapModulePanel', {
 		                       {name: 'name', type: 'string', title: Ext.sfa.translate_arrays[langid][373], width:110, summaryType:'count'},
 		                       {name: 'location', type: 'string', title: Ext.sfa.translate_arrays[langid][372], width:120},
 		                       {name: 'subid', type: 'string', title: Ext.sfa.translate_arrays[langid][332], width:180, renderer: Ext.sfa.renderer_arrays['renderRouteID']},
-							   {name: 'posx', type: 'float', hidden:true},
-							   {name: 'posy', type: 'float', hidden:true}];	
+							   {name: 'posx', type: 'float', width: 60},
+							   {name: 'posy', type: 'float', width: 60}];	
     	
     	Ext.regModel('customer_columns', {
 	        fields: me.customer_columns
