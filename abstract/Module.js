@@ -1030,9 +1030,11 @@ Ext.define('OSS.EngineModule', {
     
     addStore: function() {    	
     	var form = this.addForm.getForm();
+    	var values = this.id+'=0&'+form.getValues(true);
+		alert(values);
+
     	if (form.isValid()) {
-    		var values = this.id+'=0&'+form.getValues(true);
-			alert(values);
+    		var values = this.id+'=0&'+form.getValues(true);		
     		values = ReplaceAll(values, '&', ',');
     		
     		Ext.Ajax.request({
