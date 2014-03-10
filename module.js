@@ -9249,7 +9249,7 @@ Ext.define('OSS.BackOrderGridWindowPre', {
 										text: 'OK',
 										handler: function() {		
 											var value = quantity.getValue();
-											if (rec.data['confirmedCount'] > quantity.getValue()) {
+											if (rec.data['confirmedCount'] < quantity.getValue()) {
 												value = rec.data['confirmedCount'];
 												Ext.MessageBox.alert('Error','Хэтэрсэн байна !', null);
 											}
