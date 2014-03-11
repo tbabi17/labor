@@ -4764,7 +4764,7 @@ Ext.define('OSS.OrderGridWindowPre', {
            {name: 'availCount', type: 'int', title: Ext.sfa.translate_arrays[langid][425], align: 'right', width: 95, renderer: Ext.sfa.renderer_arrays['renderStorageNumber']},
            {name: 'requestCount', type: 'int', title: Ext.sfa.translate_arrays[langid][426], align: 'right', width: 70, summaryType: 'sum'},            
            {name: 'confirmedCount', type: 'int', title: Ext.sfa.translate_arrays[langid][421], align: 'right', width: 70, field: {xtype: 'numberfield'}, summaryType: 'sum'},
-           {name: 'price', type: 'int', title: Ext.sfa.translate_arrays[langid][414], align: 'right', width: 70, field: {xtype: 'numberfield'}, renderer: Ext.sfa.renderer_arrays['renderMoney']},
+           {name: 'price', type: 'float', title: Ext.sfa.translate_arrays[langid][414], align: 'right', width: 70, field: {xtype: 'numberfield'}, renderer: Ext.sfa.renderer_arrays['renderMoney']},
            {name: 'orderAmount', type: 'int', title: Ext.sfa.translate_arrays[langid][455], align: 'right', width: 100, field: {xtype: 'numberfield'}, renderer: Ext.sfa.renderer_arrays['renderMoney'], summaryType: 'sum', summaryRenderer: Ext.sfa.renderer_arrays['renderTMoney']},
            {name: 'wareHouseID', type: 'int', title: Ext.sfa.translate_arrays[langid][375], width: 85, renderer: Ext.sfa.renderer_arrays['renderWareHouseID']}                                 
         ];
