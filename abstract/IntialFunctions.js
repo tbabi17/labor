@@ -371,7 +371,7 @@ generateRemoteComboWithFilter= function(queryName, modelName, value, display, ca
 	var combo = Ext.create('Ext.form.ComboBox', {			
         store: Ext.create('Ext.data.JsonStore', {
 			model: modelName,	     	   
-			mode: 'remote',
+//			mode: 'remote',
 			autoLoad: true,
 	        proxy: {
 				type: 'ajax',
