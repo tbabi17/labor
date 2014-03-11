@@ -8297,7 +8297,8 @@ Ext.define('OSS.OrdersReport', {
     
     createToolbar : function() {
     	var me = this;    	    	    	
-    	me.users = me.generateRemoteComboWithFilter('_remote_section_users', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], mode);
+//    	me.users = me.generateRemoteComboWithFilter('_remote_section_users', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], mode);
+    	me.users = me.generateLocalCombo('local_user_combo', 'user_list', 'code', 'firstName', Ext.sfa.translate_arrays[langid][310], 150);    	
     	me.start = me.generateDateField('uo_date1',currentDate);
     	me.end = me.generateDateField('uo_date2',nextDate);
     	
