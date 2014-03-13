@@ -411,6 +411,26 @@ Ext.define('OSS.Module', {
     	
     	return datefield;
     },
+	
+	generateDateFieldReadOnly: function(name, value) {	
+    	var datefield = Ext.create('Ext.button.Button', {
+    		id : 'datefield'+name,
+    		xtype: 'datefield',
+            text    : value,        
+            scope   : this,
+			readOnly : true,
+            iconCls: 'calendar',
+            menu	: Ext.create('Ext.menu.DatePicker', {
+            	text: currentDate,
+                handler: function(dp, date){
+                	var dt= Ext.Date.format(date, 'Y-m-d');
+                	datefield.setText(dt);  
+                }
+            })
+        });
+    	
+    	return datefield;
+    },
 
     generateLocalCombo: function(queryName, modelName, value, display, caption, w) {
 		if (typeof w == undefined || w == 0) w = 250;		
