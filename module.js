@@ -5808,6 +5808,8 @@ Ext.define('OSS.IrtUser', {
     
     createStore : function() {
     	var me = this;
+		me.modelName = '_irts_user_list';
+		me.name = 'IrtsUser';
     	me.model = Ext.sfa.staticModels['IrtsUser'];    
     	me.store = me.model['readStore'];
     },                
