@@ -1489,14 +1489,14 @@ initStaticModels = function() {
 	});
 	
 	columns = [];
-	columns[0] = {name: 'userCode', title: 'Борлуулагч', renderer: Ext.sfa.renderer_arrays['renderUserCode'], width:130};	
+	columns[0] = {name: 'userCode', title: 'Борлуулагч', renderer: Ext.sfa.renderer_arrays['renderUserCode'], width:130, type: 'string'};	
 	
 	columns[1] = 
 	{
 		title: 'Даваа',
 		columns : [
-			{dataIndex: 'monIr', text: 'Ирсэн', width:50},
-			{dataIndex: 'monYv', text: 'Явсан', width:50}
+			{dataIndex: 'monIr', text: 'Ирсэн', width:50, type: 'string'},
+			{dataIndex: 'monYv', text: 'Явсан', width:50, type: 'string'}
 		]
 	};
 	
@@ -1504,8 +1504,8 @@ initStaticModels = function() {
 	{
 		title: 'Мягмар',
 		columns : [
-			{dataIndex: 'thueIr', text: 'Ирсэн', width:50},
-			{dataIndex: 'thueYv', text: 'Явсан', width:50}
+			{dataIndex: 'thueIr', text: 'Ирсэн', width:50, type: 'string'},
+			{dataIndex: 'thueYv', text: 'Явсан', width:50, type: 'string'}
 		]
 	};
 
@@ -1513,8 +1513,8 @@ initStaticModels = function() {
 	{
 		title: 'Лхагва',
 		columns : [
-			{dataIndex: 'wedIr', text: 'Ирсэн', width:50},
-			{dataIndex: 'wedYv', text: 'Явсан', width:50}
+			{dataIndex: 'wedIr', text: 'Ирсэн', width:50, type: 'string'},
+			{dataIndex: 'wedYv', text: 'Явсан', width:50, type: 'string'}
 		]
 	};
 
@@ -1522,8 +1522,8 @@ initStaticModels = function() {
 	{
 		title: 'Пүрэв',
 		columns : [
-			{dataIndex: 'thurIr', text: 'Ирсэн', width:50},
-			{dataIndex: 'thurYv', text: 'Явсан', width:50}
+			{dataIndex: 'thurIr', text: 'Ирсэн', width:50, type: 'string'},
+			{dataIndex: 'thurYv', text: 'Явсан', width:50, type: 'string'}
 		]
 	};
 
@@ -1531,8 +1531,8 @@ initStaticModels = function() {
 	{
 		title: 'Баасан',
 		columns : [
-			{dataIndex: 'friIr', text: 'Ирсэн', width:50},
-			{dataIndex: 'friYv', text: 'Явсан', width:50}
+			{dataIndex: 'friIr', text: 'Ирсэн', width:50, type: 'string'},
+			{dataIndex: 'friYv', text: 'Явсан', width:50, type: 'string'}
 		]
 	};
 
@@ -1540,8 +1540,8 @@ initStaticModels = function() {
 	{
 		title: 'Бямба',
 		columns : [
-			{dataIndex: 'satIr', text: 'Ирсэн', width:50},
-			{dataIndex: 'satYv', text: 'Явсан', width:50}
+			{dataIndex: 'satIr', text: 'Ирсэн', width:50, type: 'string'},
+			{dataIndex: 'satYv', text: 'Явсан', width:50, type: 'string'}
 		]
 	};
 
@@ -1549,8 +1549,8 @@ initStaticModels = function() {
 	{
 		title: 'Ням',
 		columns : [
-			{dataIndex: 'sunIr', text: 'Ирсэн', width:50},
-			{dataIndex: 'sunYv', text: 'Явсан', width:50}
+			{dataIndex: 'sunIr', text: 'Ирсэн', width:50, type: 'string'},
+			{dataIndex: 'sunYv', text: 'Явсан', width:50, type: 'string'}
 		]
 	};
 
