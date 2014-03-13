@@ -1469,20 +1469,20 @@ initStaticModels = function() {
 	model = [];
 	fields = [];
 	fields[0] = {name: 'userCode', type: 'string'};
-	fields[1] = {name: 'monIr'};
-	fields[2] = {name: 'monYv'};
-	fields[3] = {name: 'thueIr'};
-	fields[4] = {name: 'thueYv'};
-	fields[5] = {name: 'wedIr'};
-	fields[6] = {name: 'wedYv'};
-	fields[7] = {name: 'thurIr'};
-	fields[8] = {name: 'thurYv'};
-	fields[9] = {name: 'friIr'};
-	fields[10] = {name: 'friYv'};
-	fields[11] = {name: 'satIr'};
-	fields[12] = {name: 'satYv'};
-	fields[13] = {name: 'sunIr'};
-	fields[14] = {name: 'sunYv'};
+	fields[1] = {name: 'monIr', type: 'string'};
+	fields[2] = {name: 'monYv', type: 'string'};
+	fields[3] = {name: 'thueIr', type: 'string'};
+	fields[4] = {name: 'thueYv', type: 'string'};
+	fields[5] = {name: 'wedIr', type: 'string'};
+	fields[6] = {name: 'wedYv', type: 'string'};
+	fields[7] = {name: 'thurIr', type: 'string'};
+	fields[8] = {name: 'thurYv', type: 'string'};
+	fields[9] = {name: 'friIr', type: 'string'};
+	fields[10] = {name: 'friYv', type: 'string'};
+	fields[11] = {name: 'satIr', type: 'string'};
+	fields[12] = {name: 'satYv', type: 'string'};
+	fields[13] = {name: 'sunIr', type: 'string'};
+	fields[14] = {name: 'sunYv', type: 'string'};
 
 	Ext.regModel('irtuser', {	        
 		fields: fields 
