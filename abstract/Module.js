@@ -1538,6 +1538,12 @@ Ext.define('OSS.EngineModule', {
 											} else
 												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
 										}
+										if (me.id == 'your-turn-win' && section == 'cosmo') {
+											if (me.users.getValue() != 'null') {
+												window.open('http://202.131.237.150/unv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
+											} else
+												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
+										}
 									}	                
 								};
 			me.buttons[count+3] = '-';
