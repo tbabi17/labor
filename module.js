@@ -3076,7 +3076,7 @@ Ext.define('OSS.ControlPanel', {
                    ['Message', 'message', 'Мессеж', 'id', 500, 350, 'message-module'],
                    ['Parent_Names', 'parent_list', 'Сүлжээ дэлгүүр', 'id', 400, 585, 'info-module'],
                    ['Promotion', 'promotion', 'Урамшуулал', 'id', 850, 450, 'promo-module'],
-                   ['Packet', 'packet', Ext.sfa.translate_arrays[langid][273], '_group', 400, 400, 'info-module'],
+                   ['Packet', 'packet', Ext.sfa.translate_arrays[langid][273], 'id', 400, 400, 'info-module'],
                    ['User_Type', 'user_type', Ext.sfa.translate_arrays[langid][274], '_group', 400, 400, 'info-module'],
                    ['Ware_House', 'ware_house', Ext.sfa.translate_arrays[langid][275], 'wareHouseID', 400, 400, 'info-module'],
             ]
