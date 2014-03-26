@@ -847,6 +847,17 @@ function DataCollection() {
 			}	
 		}
 	}
+
+	this.initCosmo = function (store, key1, key2, value) {
+		if (this.names_value_array.length == 0)
+		{
+			for (i = 0; i < store.getCount(); i++) {
+				var record = store.getAt(i);
+				if (record.data[value])
+					this.names_value_array[record.data[key1]] = '<b>'+record.data[key2]+'</b> '+record.data[value];						
+			}	
+		}
+	}
 };
 
 generateFunction = function (tableName, modelName, funName, extend, fields, types, where) {
@@ -868,14 +879,28 @@ generateFunction = function (tableName, modelName, funName, extend, fields, type
 							else
 								return dc.names_value_array[v+''];*/
 						}
-					} else {
+					} else 
+					if (extend.type == '2') {
+						dc.initCosmo(store, extend.key1, extend.key2, extend.value);
+						Ext.sfa.renderer_arrays[funName] = function(v) {
+							if (!dc.names_value_array[v+'']) 
+								return v;
+							
+							return dc.names_value_array[v+''];
+						}
+					}	
+					else {
 						dc.init(store, extend.key1, extend.value);
 						Ext.sfa.renderer_arrays[funName] = function(v) {
 							if (!dc.names_value_array[v+'']) 
 								return v;
 
-							if (v.length >= 3)							
+							if (v.length >= 3) {							
+								if (mode == 'cosmo')
+									return '<b>'+v+'</b>-'+dc.names_value_array[v+''];
+
 								return '<b>'+v+'</b>-'+dc.names_value_array[v+''];
+							}
 							else
 								return dc.names_value_array[v+''];
 						}
