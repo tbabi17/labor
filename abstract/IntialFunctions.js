@@ -854,7 +854,7 @@ function DataCollection() {
 			for (i = 0; i < store.getCount(); i++) {
 				var record = store.getAt(i);
 				if (record.data[value])
-					this.names_value_array[record.data[key1]] = '<b>'+record.data[key2]+'</b>-'+record.data[value];						
+					this.names_value_array[record.data[key1]] = '<b>'+record.data[key2]+'</b>-'+record.data[value]+'-'+record.data[key1];						
 			}	
 		}
 	}
