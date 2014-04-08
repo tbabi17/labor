@@ -8770,9 +8770,9 @@ Ext.define('OSS.OrderImportManual', {
 							value: rec.data['price'],
 							xtype: 'currencyfield',
 							allowBlank: false,
-							decimalPrecision:2,
+//							decimalPrecision:2,
 							align: 'right',
-							allowDecimals: true		                	               
+//							allowDecimals: true
 						});		
 						
 						requestCount.on('change', function(e) {
