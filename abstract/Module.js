@@ -555,7 +555,7 @@ Ext.define('OSS.Module', {
             mode: 'remote',
             triggerAction: 'all',
             autoSelect: true,
-            margins: '0 0 0 5', 
+            margins: '4 0 0 4', 
             emptyText: caption,
             selectOnFocus: true,
             width: 160	                 
