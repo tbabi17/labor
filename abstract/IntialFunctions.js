@@ -1737,6 +1737,7 @@ initSpec = function() {
 	Ext.sfa.combos['promo_type'] = 'promo_types,id,descr';
 	Ext.sfa.combos['_group'] = 'user_type,_group,descr';
 	Ext.sfa.combos['section'] = 'section,section,descr';
+	Ext.sfa.combos['manufacturer'] = '_remote_vendor_list,vendor,vendor';
 //	Ext.sfa.combos['vendor'] = '_remote_vendor_list,vendor,vendor';
 	Ext.sfa.combos['active'] = 'active,id,descr';
 	Ext.sfa.combos['productCode'] = 'product_list,code,name';
@@ -1751,17 +1752,14 @@ initSpec = function() {
 	Ext.sfa.combos['eventID'] = 'work_types,id,descr';
 	Ext.sfa.combos['brand'] = 'brand_list,brand,brand';
 	Ext.sfa.combos['unit_type'] = 'unit_type,id,descr';
-	Ext.sfa.combos['promo_direction'] = 'promo_direction,id,descr';
-	
+	Ext.sfa.combos['promo_direction'] = 'promo_direction,id,descr';	
 	Ext.sfa.combos['ban_type'] = 'ban_type,id,descr';
-	Ext.sfa.combos['free_type'] = 'free_type,id,descr';
-	
+	Ext.sfa.combos['free_type'] = 'free_type,id,descr';	
 	Ext.sfa.combos['manager'] = 'user_list,code,firstName';
 	Ext.sfa.combos['userCode'] = '_remote_section_users,code,firstName,user_list,310';
 	Ext.sfa.combos['inUser'] = 'user_list,code,firstName';
 	Ext.sfa.combos['repUserCode'] = 'user_list,code,firstName';
 	Ext.sfa.combos['partnerCode'] = 'user_list,code,firstName';
-					
 	Ext.sfa.combos['mon'] = 'route_list,routeID,routeName';
 	Ext.sfa.combos['thue'] = 'route_list,routeID,routeName';
 	Ext.sfa.combos['wed'] = 'route_list,routeID,routeName';
