@@ -1737,7 +1737,7 @@ initSpec = function() {
 	Ext.sfa.combos['promo_type'] = 'promo_types,id,descr';
 	Ext.sfa.combos['_group'] = 'user_type,_group,descr';
 	Ext.sfa.combos['section'] = 'section,section,descr';
-	Ext.sfa.combos['manufacturer'] = '_remote_vendor_list,vendor,descr,product_list,310';
+	Ext.sfa.combos['manufacturer'] = '_remote_vendor_list,vendor,descr,product_list,704';
 	Ext.sfa.combos['active'] = 'active,id,descr';
 	Ext.sfa.combos['productCode'] = 'product_list,code,name';
 	Ext.sfa.combos['freeProductCode'] = 'product_list,code,name';
@@ -2192,6 +2192,7 @@ initLang = function() {
 	Ext.sfa.translate_arrays['mon'][701]='Урамшуулалын тайлан';
 	Ext.sfa.translate_arrays['mon'][702]='Захиалгын дүн';
 	Ext.sfa.translate_arrays['mon'][703]='Мөнгөн дүнгээр';
+	Ext.sfa.translate_arrays['mon'][704]='Бэлтгэн нийлүүлэгч';
 	loaded++;
 }
 	    		
