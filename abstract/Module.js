@@ -902,6 +902,7 @@ Ext.define('OSS.EngineModule', {
     					this.forms[this.count].columnWidth = fW;							
     					this.forms[this.count].fieldLabel = column.title;
     					this.forms[this.count].name = column.name;
+    					this.forms[this.count].margin = '4 0 0 4';
     				}
     				else {
 						var dvalue = me.getDefaultValue(combo[0]);	
