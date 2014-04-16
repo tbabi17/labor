@@ -883,6 +883,7 @@ Ext.define('OSS.EngineModule', {
     			if (column.type == 'datetime' || column.type == 'date')
     				xtype = 'datefield';
     			
+				if (column.name == 'descr')	value = ' ';				
     			var allowBlank = (column.allowBlank != undefined ? true:false);
 				if (name == 'Customer' && column.name == 'subid1')
 					allowBlank = true;
