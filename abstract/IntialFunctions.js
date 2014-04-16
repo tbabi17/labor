@@ -1738,7 +1738,6 @@ initSpec = function() {
 	Ext.sfa.combos['_group'] = 'user_type,_group,descr';
 	Ext.sfa.combos['section'] = 'section,section,descr';
 	Ext.sfa.combos['manufacturer'] = '_remote_vendor_list,vendor,descr,vendor_list,310';
-//	Ext.sfa.combos['vendor'] = '_remote_vendor_list,vendor,vendor';
 	Ext.sfa.combos['active'] = 'active,id,descr';
 	Ext.sfa.combos['productCode'] = 'product_list,code,name';
 	Ext.sfa.combos['freeProductCode'] = 'product_list,code,name';
