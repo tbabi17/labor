@@ -1516,7 +1516,7 @@ Ext.define('OSS.EngineModule', {
 									handler: function() {                     	
 //										Ext.ux.grid.Printer.printAutomatically = true;            	
 //										Ext.ux.grid.Printer.print(me.gridPanel);		
-alert(me.id);
+alert(me.name);
 										if (me.id == 'orders-report-win' && section == 'battrade') {
 											if (me.users.getValue() != 'null') {
 												window.open('http://183.177.103.19/inv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0');
