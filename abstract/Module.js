@@ -1520,31 +1520,37 @@ Ext.define('OSS.EngineModule', {
 											if (me.users.getValue() != 'null') {
 												window.open('http://183.177.103.19/inv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0');
 											} else
-												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
+												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
 										} else
 										if (me.id == 'orders-report-win' && section == 'bosa') {
 											if (me.users.getValue() != 'null') {
 												window.open('http://202.131.227.78/inv/?values='+me.users.getValue()+';asdf;'+me.start.getText()+';'+logged);
 											} else
-												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
+												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
 										} else
 										if (me.id == 'orders-report-win' && section == 'cosmo') {
 											if (me.users.getValue() != 'null') {
-												window.open('http://202.131.237.150/inv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0');
+												window.open('http://202.131.237.150/inv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
 											} else
-												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
+												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
+										} else
+										if (me.id == 'BackDesign' && section == 'cosmo') {
+											if (me.users.getValue() != 'null') {
+												window.open('http://202.131.237.150/rsr/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
+											} else
+												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
 										} else
 										if (me.id == 'orders-report-win-pre' && section == 'cosmo') {
 											if (me.users.getValue() != 'null') {
 												window.open('http://202.131.237.150/inv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
 											} else
-												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
+												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
 										}
 										if (me.id == 'your-turn-win' && section == 'cosmo') {
 											if (me.users.getValue() != 'null') {
 												window.open('http://202.131.237.150/unv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
 											} else
-												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Суваг сонгон уу !', null);
+												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
 										}
 									}	                
 								};
