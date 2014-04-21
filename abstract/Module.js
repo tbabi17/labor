@@ -1535,7 +1535,7 @@ alert(me.name);
 											} else
 												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
 										} else
-										if (me.id == 'BackDesign' && section == 'cosmo') {
+										if (me.name == 'BackDesign' && section == 'cosmo') {
 											if (me.users.getValue() != 'null') {
 												window.open('http://202.131.237.150/rsr/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
 											} else
