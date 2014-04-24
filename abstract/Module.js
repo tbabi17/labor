@@ -1534,7 +1534,7 @@ Ext.define('OSS.EngineModule', {
 											} else
 												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
 										} else
-										if (me.name == 'BackDesign' && mode == 'cosmo') {											
+										if (me.name == 'BackDesign' && section == 'cosmo') {											
 											window.open('http://202.131.237.150/rsr/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
 										} else
 										if (me.id == 'orders-report-win-pre' && section == 'cosmo') {
