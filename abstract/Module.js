@@ -1530,15 +1530,12 @@ Ext.define('OSS.EngineModule', {
 										} else
 										if (me.id == 'orders-report-win' && section == 'cosmo') {
 											if (me.users.getValue() != 'null') {
-												window.open('http://202.131.237.150/inv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
+												window.open('http://202.131.237.150/rcb/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
 											} else
 												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
 										} else
-										if (me.name == 'BackDesign' && mode == 'cosmo') {
-											if (me.users.getValue() != 'null') {
-												window.open('http://202.131.237.150/rsr/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
-											} else
-												Ext.MessageBox.alert(Ext.sfa.translate_arrays[langid][538], 'Борлуулагч сонгон уу !', null);
+										if (me.name == 'BackDesign' && mode == 'cosmo') {											
+											window.open('http://202.131.237.150/rsr/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0;'+logged);
 										} else
 										if (me.id == 'orders-report-win-pre' && section == 'cosmo') {
 											if (me.users.getValue() != 'null') {
