@@ -1515,7 +1515,8 @@ Ext.define('OSS.EngineModule', {
 									iconCls: 'icon-print',		
 									handler: function() {                     	
 //										Ext.ux.grid.Printer.printAutomatically = true;            	
-//										Ext.ux.grid.Printer.print(me.gridPanel);		
+//										Ext.ux.grid.Printer.print(me.gridPanel);	
+alert(1);
 										if (me.id == 'orders-report-win' && section == 'battrade') {
 											if (me.users.getValue() != 'null') {
 												window.open('http://183.177.103.19/inv/?values='+me.users.getValue()+';1234567890123;'+me.start.getText()+';1;0');
