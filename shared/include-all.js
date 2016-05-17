@@ -47,7 +47,7 @@
     document.write('<link rel="stylesheet" type="text/css" href="ux/css/LiveSearchGridPanel.css"/>');
     
 	//scripts
-    document.write('<script type="text/javascript" src="https://optimal-mxc-project.googlecode.com/svn/trunk/shared/ext-all-debug.js"></script>');
+    document.write('<script type="text/javascript" src="https://rawgit.com/tbabi17/labor/master/shared/ext-all-debug.js"></script>');
 	document.write('<script type="text/javascript" src="ux/form/NumericField.js"></script>'); 
 
 	//settings
